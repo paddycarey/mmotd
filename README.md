@@ -9,4 +9,4 @@ If you'd like to help then please get in touch @paddycarey on twitter.
 
 All code will be licensed under the MIT license.  Assets and artwork will be licensed differently (to be decided later).
 
-The backend will be built on Google Appengine with Django 1.5. Frontend stack to be determined.
+The backend will be built on Google Appengine with Django 1.5. Frontend stack to be determined...
