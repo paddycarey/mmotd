@@ -1,0 +1,83 @@
+{% extends 'awwm/base.html' %}
+
+{% block extra_css %}
+  <!-- Custom styles for this template -->
+  <link href="/static/awwm/css/pregame.css" rel="stylesheet">
+{% endblock %}
+
+{% block extra_head %}
+  <!-- js for channel api needs to be loaded in head -->
+  <script src='/_ah/channel/jsapi'></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row header-row">
+    <div class="col-md-6 col-md-offset-3">
+      <h2>Lobby: {{ game.name }}</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <h4>Players</h2>
+      <table class="table table-striped">
+        <tbody>
+          {% for player in game.active_players %}
+            <tr>
+              <td><img src="{{ player.gravatar }}"></td>
+              <td>
+                {{ player.nickname }}
+              </td>
+              <td>
+                {% if player.ready %}
+                  <a class="btn btn-success" href="#" id="ready-a-{{ player.user.id }}" title="Click to toggle readiness!">
+                    <span id="ready-span-{{ player.user.id }}" class="glyphicon glyphicon-ok"></span>
+                  </a>
+                {% else %}
+                  <a class="btn btn-danger" href="#" id="ready-a-{{ player.user.id }}" title="Click to toggle readiness!">
+                    <span id="ready-span-{{ player.user.id }}" class="glyphicon glyphicon-remove"></span>
+                  </a>
+                {% endif %}
+              </td>
+              {% if game.creator.id == request.user.user_id %}
+                <td>
+                  <a class="btn btn-danger" href="#">
+                    <span class="glyphicon glyphicon-remove"></span> Kick
+                  </a>
+                </td>
+              {% endif%}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-8">
+      <h4>Chat</h2>
+      <div class="well well-sm well-chat" id="chat-well">
+        <p class="text-success">[{{ timestamp }}] {{ game.welcome_message }}</p>
+      </div>
+      <form class="chat-form" id="chat-form">
+        <input type="text" class="form-control" id="chat-input" placeholder="Chat to your opponents...">
+      </form>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h4>Player config</h2>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_javascript %}
+  {% include 'awwm/partials/handlebars.html' %}
+  <script type="text/javascript">
+    var channel_token = '{{ token }}'
+    var user_id = '{{ request.user.user_id }}'
+    var user_nickname = '{{ request.user.email }}'
+    var chat_url = "{% url 'awwm-pregame-chat' game.key.id %}"
+    var status_update_url = "{% url 'awwm-pregame-status-update' game.key.id %}"
+    var replay_chat_url = "{% url 'awwm-pregame-replay-chat' game.key.id %}"
+  </script>
+  <script src="/static/awwm/js/pregame.js"></script>
+{% endblock %}

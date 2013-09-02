@@ -1,0 +1,8 @@
+# almost empty indexes file so as to force manual curation
+indexes:
+
+- kind: ChatMessage
+  properties:
+  - name: game
+  - name: created
+    direction: desc
