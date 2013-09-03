@@ -9,5 +9,5 @@ var Class = function(methods) {
          
     if (!klass.prototype.initialize) klass.prototype.initialize = function(){};     
    
-    return klass;   
+    return klass;
 };
