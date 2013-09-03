@@ -49,7 +49,7 @@ var Game = Class({
     },
 
     _testDragableHead:function() {
-        var texture      = PIXI.Texture.fromImage("./imgs/face.png"),
+        var texture      = PIXI.Texture.fromImage("./static/imgs/face.png"),
             face         = new PIXI.Sprite(texture);
         face.interactive = true;
         face.buttonMode  = true;
@@ -112,9 +112,9 @@ var Game = Class({
     _loadGrid:function() {
 
         // COLLECT GRID DATA
-        var grid        = PIXI.Texture.fromImage("./imgs/grid1.png"),
-            grid_b      = PIXI.Texture.fromImage("./imgs/grid3.png"),
-            grid_hover  = PIXI.Texture.fromImage("./imgs/grid2.png"),
+        var grid        = PIXI.Texture.fromImage("./static/imgs/grid1.png"),
+            grid_b      = PIXI.Texture.fromImage("./static/imgs/grid3.png"),
+            grid_hover  = PIXI.Texture.fromImage("./static/imgs/grid2.png"),
             grid_height = Math.floor(this.config.iHeight / this.config.gridHeight),
             grid_width  = Math.floor(this.config.iWidth / this.config.gridWidth);
         // ENSURE AN EVEN NUMBER OF SQUARES PER SIDE
