@@ -1,5 +1,5 @@
 """
-Auth/Login views
+Unauthenticated template views
 """
 # third-party imports
 from django.core.urlresolvers import reverse
@@ -10,15 +10,15 @@ from google.appengine.api import users
 from mmotd.views.decorators import render_with_template
 
 
-@render_with_template('mmotd/login.html')
-def login_view(request):
+@render_with_template('splash.html')
+def splash_view(request):
     """
-    Display a login page allowing user to begin process of signing in with
+    Display a splash page allowing user to begin process of signing in with
     their google account.
     """
 
     # pop the redirect url from the session
-    next_url = request.session.get('redirect-after-login', reverse('mmotd-lobby'))
+    next_url = request.session.get('redirect-after-login', reverse('template-authed-game'))
     try:
         del request.session['redirect-after-login']
     except KeyError:
