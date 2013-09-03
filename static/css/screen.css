@@ -1,0 +1,12 @@
+#gametools { 
+	position:absolute;
+	background:#333;
+	color:#efefef;
+	padding:10px;
+	float:left;
+	height:80px;
+	display:none;
+}
+#gameobj {
+	display:block;
+}

@@ -1,11 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-
     <head>
-        <meta charset="UTF-8" />
-        <title>Game/Lobby page</title>
-    </head>
+    <title>Pixi Test</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="./css/screen.css" />
+    <script type="text/javascript" src="./js/pixi.js"></script>
+    <script type="text/javascript" src="./js/lib.js"></script>
+    <script type="text/javascript" src="./js/game.js"></script>
+    <script type="text/javascript">
+        <!--
+        window.onload = function () {
+
+            var config = {
+                oGameObj   : document.getElementById('gameobj'),
+                oGameScore : document.getElementById('gamescore'),
+                oGameTools : document.getElementById('gametools'),
+                bg         : 0x66FF99,
+                iWidth     : 400,
+                iHeight    : 300
+            };
+
+            var game = new Game(config);
+            
+            requestAnimFrame( animate );
+
+            function animate () {
+                requestAnimFrame( animate );
+                game._animate();
+
+                game.renderer.render(game.stage);
+            }
+        };
+        -->
+    </script>
+</head>
 <body>
-    <h2>Lobby/Game</h2>
+
+<div id="gamescore"></div>
+<div id="gametools"></div>
+<div id="gameobj"></div>
+
 </body>
 </html>
