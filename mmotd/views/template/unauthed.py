@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from google.appengine.api import users
 
 # local imports
-from mmotd.views.decorators import render_with_template
+from mmotd.views.template.decorators import render_with_template
 
 
 @render_with_template('splash.html')

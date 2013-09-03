@@ -10,7 +10,7 @@ from mmotd.utils.channel_api import send_message
 
 
 @csrf_exempt
-def channel_relay(request):
+def relay_view(request):
 
     """
     Simply relays a message via the channel API to the given client

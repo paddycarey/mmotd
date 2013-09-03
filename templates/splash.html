@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8" />
+        <title>Splash/Login page</title>
+    </head>
+<body>
+    <h2>Welcome!</h2>
+    {% if request.user == None %}
+        <p><a href="{{ login_url }}">Log in</a></p>
+    {% endif %}
+</body>
+</html>

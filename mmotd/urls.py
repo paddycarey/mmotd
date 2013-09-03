@@ -8,9 +8,9 @@ urlpatterns = patterns('',
 
     # mmotd routes
     url(r'^$', 'mmotd.views.template.unauthed.splash_view', name='template-unauthed-splash'),
-    url(r'^game/$', 'mmotd.views.template.authed.splash_view', name='template-authed-game'),
+    url(r'^game/$', 'mmotd.views.template.authed.game_view', name='template-authed-game'),
 
     # taskqueue routes
-    url(r'^api/channel/relay/$', 'mmotd.views.api.channel.relay', name='api-channel-relay'),
+    url(r'^api/channel/relay/$', 'mmotd.views.api.channel.relay_view', name='api-channel-relay'),
 
 )
