@@ -25,8 +25,21 @@ def login_required(func):
             return func(request, *args, **kw)
         else:
             request.session['redirect-after-login'] = request.get_full_path()
-            return HttpResponseRedirect(reverse('awwm-login'))
+            return HttpResponseRedirect(reverse('mmotd-login'))
 
+    return _wrapper
+
+
+def taskqueue_required(func):
+    """
+    checks that request has been made by a taskqueue
+    """
+    def _wrapper(request, *args, **kw):
+        # check if the user's logged in
+        if users.is_current_user_admin():
+            return func(request, *args, **kw)
+        else:
+            return HttpResponse('Access Denied')
     return _wrapper
 
 

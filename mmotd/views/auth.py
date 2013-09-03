@@ -7,10 +7,10 @@ from django.http import HttpResponseRedirect
 from google.appengine.api import users
 
 # local imports
-from awwm.views.decorators import render_with_template
+from mmotd.views.decorators import render_with_template
 
 
-@render_with_template('awwm/login.html')
+@render_with_template('mmotd/login.html')
 def login_view(request):
     """
     Display a login page allowing user to begin process of signing in with
@@ -18,7 +18,7 @@ def login_view(request):
     """
 
     # pop the redirect url from the session
-    next_url = request.session.get('redirect-after-login', reverse('awwm-lobby'))
+    next_url = request.session.get('redirect-after-login', reverse('mmotd-lobby'))
     try:
         del request.session['redirect-after-login']
     except KeyError:

@@ -2,7 +2,7 @@
 from google.appengine.ext import ndb
 
 # local imports
-from awwm.utils import gravatar
+from mmotd.utils.gravatar import gravatar
 
 
 class User(ndb.Model):

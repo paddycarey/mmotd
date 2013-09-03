@@ -64,7 +64,7 @@ INSTALLED_APPS = (
     'floppyforms',
     # 'raven.contrib.django.raven_compat',
     # local apps
-    'awwm',
+    'mmotd',
     'compat.sessions',
 
 )

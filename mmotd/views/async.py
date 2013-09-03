@@ -2,24 +2,23 @@
 Lobby/Pregame views and related functions
 """
 # stdlib imports
-import json
 import logging
 
 # third-party imports
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from google.appengine.api import channel
 
 # local imports
-from awwm.models.games import Game
-from awwm.models.games import Player
-from awwm.models.games_utils import replay_chat_messages
-from awwm.models.users import User
-from awwm.views.decorators import require_methods
+from mmotd.models.games import Game
+from mmotd.models.games import Player
+from mmotd.models.games_utils import replay_chat_messages
+from mmotd.models.users import User
+from mmotd.utils.channel_api import send_message
+from mmotd.views.decorators import taskqueue_required
 
 
 @csrf_exempt
-@require_methods(['POST'])
+@taskqueue_required
 def replay_chat(request):
 
     # get game from datastore or throw 404
@@ -40,3 +39,19 @@ def replay_chat(request):
 
     # return some kind of response to the sender
     return HttpResponse('Chat replayed')
+
+
+@csrf_exempt
+@taskqueue_required
+def channel_relay(request):
+
+    """
+    Simply relays a message via the channel API to the given client
+    """
+
+    # get message details from post data
+    token = request.POST['token']
+    message = request.POST['message']
+    # send channel message
+    send_message(token, message)
+    return HttpResponse('channel messages relayed')

@@ -1,8 +1,8 @@
-{% extends 'awwm/base.html' %}
+{% extends 'mmotd/base.html' %}
 
 {% block extra_css %}
   <!-- Custom styles for this template -->
-  <link href="/static/awwm/css/pregame.css" rel="stylesheet">
+  <link href="/static/mmotd/css/pregame.css" rel="stylesheet">
 {% endblock %}
 
 {% block extra_head %}
@@ -70,14 +70,14 @@
 {% endblock %}
 
 {% block extra_javascript %}
-  {% include 'awwm/partials/handlebars.html' %}
+  {% include 'mmotd/partials/handlebars.html' %}
   <script type="text/javascript">
     var channel_token = '{{ token }}'
     var user_id = '{{ request.user.user_id }}'
     var user_nickname = '{{ request.user.email }}'
-    var chat_url = "{% url 'awwm-pregame-chat' game.key.id %}"
-    var status_update_url = "{% url 'awwm-pregame-status-update' game.key.id %}"
-    var replay_chat_url = "{% url 'awwm-pregame-replay-chat' game.key.id %}"
+    var chat_url = "{% url 'mmotd-pregame-chat' game.key.id %}"
+    var status_update_url = "{% url 'mmotd-pregame-status-update' game.key.id %}"
+    var replay_chat_url = "{% url 'mmotd-pregame-replay-chat' game.key.id %}"
   </script>
-  <script src="/static/awwm/js/pregame.js"></script>
+  <script src="/static/mmotd/js/pregame.js"></script>
 {% endblock %}

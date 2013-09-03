@@ -15,38 +15,38 @@ from google.appengine.api import channel
 from google.appengine.api import taskqueue
 
 # local imports
-from awwm.forms import GameForm
-from awwm.models.games import ChatMessage
-from awwm.models.games import Game
-from awwm.models.games import Player
-from awwm.models.users import User
-from awwm.views.decorators import login_required
-from awwm.views.decorators import render_as_json
-from awwm.views.decorators import render_with_template
-from awwm.views.decorators import require_methods
+from mmotd.forms import GameForm
+from mmotd.models.games import ChatMessage
+from mmotd.models.games import Game
+from mmotd.models.games import Player
+from mmotd.models.users import User
+from mmotd.views.decorators import login_required
+from mmotd.views.decorators import render_as_json
+from mmotd.views.decorators import render_with_template
+from mmotd.views.decorators import require_methods
 
 
 @login_required
-@render_with_template('awwm/lobby.html')
+@render_with_template('mmotd/lobby.html')
 def lobby_view(request):
     return {'active_games': Game.get_active_games()}
 
 
 @login_required
-@render_with_template('awwm/pregame.html')
+@render_with_template('mmotd/pregame.html')
 def pregame_view(request, game_id):
     # get game from datastore or throw 404
     game = Game.get_or_404(game_id)
     # attempt to add the current user to the game if it's not already full
     if not game.add_player(request.user):
         # add a flash message and redirect the user back to the lobby
-        return HttpResponseRedirect(reverse('awwm-lobby'))
+        return HttpResponseRedirect(reverse('mmotd-lobby'))
     token = channel.create_channel(request.user.user_id() + game_id)
     return {'game': game, 'timestamp': datetime.datetime.utcnow().strftime('%H:%M:%S'), 'token': token}
 
 
 @login_required
-@render_with_template('awwm/newgame.html')
+@render_with_template('mmotd/newgame.html')
 def newgame_view(request):
     """
     Form that allows creation of a new game in the lobby
@@ -59,7 +59,7 @@ def newgame_view(request):
         if form.is_valid():
             new_game = Game(name=form.cleaned_data['name'], creator=User.get_or_insert_for_user(request.user).key)
             new_game.put()
-            return HttpResponseRedirect(reverse('awwm-pregame', args=(new_game.key.id(),)))
+            return HttpResponseRedirect(reverse('mmotd-pregame', args=(new_game.key.id(),)))
 
     return {'form': form}
 
@@ -153,7 +153,7 @@ def pregame_replay_chat_view(request, game_id):
         return HttpResponse('{"error": "bad request"}', content_type="application/json", status=400)
 
     # run background task to do the hard work
-    taskqueue.add(url=reverse('awwm-async-replay-chat'), params={'game_id': game_id, 'user_id': request.user.user_id()})
+    taskqueue.add(url=reverse('mmotd-async-replay-chat'), params={'game_id': game_id, 'user_id': request.user.user_id()})
 
     # return some kind of response to the sender
     return {'result': 'success'}

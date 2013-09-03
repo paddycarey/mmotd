@@ -6,7 +6,7 @@ from google.appengine.api import channel
 from google.appengine.ext import ndb
 
 # local imports
-from awwm.models.games import ChatMessage
+from mmotd.models.games import ChatMessage
 
 
 def replay_chat_messages(game_key, user_key, limit=50):

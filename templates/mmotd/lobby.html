@@ -1,8 +1,8 @@
-{% extends 'awwm/base.html' %}
+{% extends 'mmotd/base.html' %}
 
 {% block extra_css %}
   <!-- Custom styles for this template -->
-  <link href="/static/awwm/css/lobby.css" rel="stylesheet">
+  <link href="/static/mmotd/css/lobby.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -22,7 +22,7 @@
                         <td>{{ game.started }}</td>
                         <td>{{ game.player_count }}</td>
                         <td>
-                            <a class="btn btn-success" href="{% url 'awwm-pregame' game.key.id %}">
+                            <a class="btn btn-success" href="{% url 'mmotd-pregame' game.key.id %}">
                                 <span class="glyphicon glyphicon-sent"></span> Join Game
                             </a>
                             {% if game.creator.id == request.user.user_id %}

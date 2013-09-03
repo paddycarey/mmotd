@@ -3,7 +3,7 @@ from django.http import Http404
 from google.appengine.ext import ndb
 
 # local imports
-from awwm.models.users import User
+from mmotd.models.users import User
 
 
 class ChatMessage(ndb.Model):
