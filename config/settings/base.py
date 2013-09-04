@@ -3,6 +3,7 @@ Django settings for djappengine project.
 """
 # stdlib imports
 import os
+import sys
 
 # get the app's path so we can use it in other places
 THIS_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -59,7 +60,7 @@ INSTALLED_APPS = (
     # built-in apps
     'django.contrib.sessions',
     # third-party apps
-    # 'raven.contrib.django.raven_compat',
+    'raven.contrib.django.raven_compat',
     # local apps
     'mmotd',
     'compat.sessions',
@@ -79,9 +80,10 @@ SESSION_ENGINE = "compat.sessions.backends.cached_db"
 EMAIL_BACKEND = 'compat.mail.backends.sync.EmailBackend'
 # SESSION_SAVE_EVERY_REQUEST = True
 
-# RAVEN_CONFIG = {
-#     'dsn': '',
-# }
+RAVEN_CONFIG = {
+    'dsn': 'https://4270dfd360634fbaa78e6eb4728f0826:33c5993ca58e4dd9bd0d566b1d52e3f4@app.getsentry.com/12598',
+}
+SENTRY_CLIENT = 'compat.raven_client.AppengineClient'
 # SENTRY_DEBUG = True
 
 #######################################################
@@ -151,12 +153,17 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'stream': sys.stdout
+        },
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': True,
         },
     }

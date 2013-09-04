@@ -19,7 +19,6 @@ import sys
 # We need to add our lib directory to the path so we can import the modules
 # that live there
 sys.path.extend(['vendor'])
-from raven.contrib.django.raven_compat.middleware.wsgi import Sentry
 
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks
 # if running multiple sites in the same mod_wsgi process. To fix this, use
@@ -31,4 +30,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
 from django.core.wsgi import get_wsgi_application
-application = Sentry(get_wsgi_application())
+application = get_wsgi_application()
+
+from raven.contrib.django import models

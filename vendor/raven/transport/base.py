@@ -11,13 +11,9 @@ import logging
 import sys
 from raven.utils import compat
 
-try:
-    # Google App Engine blacklists parts of the socket module, this will prevent
-    # it from blowing up.
-    from socket import socket, AF_INET, SOCK_DGRAM, error as socket_error
-    has_socket = True
-except:
-    has_socket = False
+# Google App Engine blacklists parts of the socket module, this will prevent
+# it from blowing up.
+has_socket = False
 
 try:
     import gevent

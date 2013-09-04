@@ -14,4 +14,4 @@ TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader', TEMPLATE_LOADERS),
 )
 
-SECRET_KEY = None
+# SECRET_KEY = None
