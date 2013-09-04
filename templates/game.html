@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" type="text/css" href="/static/css/screen.css" />
     <script type="text/javascript" src="/static/js/pixi.js"></script>
+    <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
     <script type="text/javascript" src="/static/js/lib.js"></script>
     <script type="text/javascript" src="/static/js/game.js"></script>
     <script type="text/javascript">
@@ -21,6 +22,10 @@
             };
 
             var game = new Game(config);
+            
+            var test = { var1:1, var2:2 };
+            
+            console.log(_.extend(game,test));
             
             requestAnimFrame( animate );
 
