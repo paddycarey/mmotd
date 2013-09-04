@@ -1,3 +1,6 @@
+"""
+Helpers to assist when using gravatar
+"""
 # stdlib imports
 import hashlib
 import urllib

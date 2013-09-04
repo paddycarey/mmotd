@@ -40,7 +40,7 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = False
+USE_TZ = True
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -57,11 +57,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 INSTALLED_APPS = (
     # built-in apps
-
     'django.contrib.sessions',
-    'django.contrib.messages',
     # third-party apps
-    'floppyforms',
     # 'raven.contrib.django.raven_compat',
     # local apps
     'mmotd',
@@ -105,7 +102,7 @@ MIDDLEWARE_CLASSES = (
     # handles temporary messages
     'django.contrib.messages.middleware.MessageMiddleware',
     # because security yo!
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
@@ -117,7 +114,6 @@ MIDDLEWARE_CLASSES = (
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
 )
 
 # Directories in which the filesystem TEMPLATE_LOADER will look for templates

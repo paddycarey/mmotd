@@ -1,5 +1,5 @@
 queue:
 - name: channel-relay
-  rate: 2000/s
-  bucket_size: 2000
+  rate: 500/s
+  bucket_size: 100
   max_concurrent_requests: 1000

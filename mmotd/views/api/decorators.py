@@ -7,18 +7,27 @@ import json
 # third-party imports
 from django.http import HttpResponse
 
+# local imports
+from mmotd.views.api.exceptions import HttpException
 
 
-def taskqueue_required(func):
+def login_required(func):
     """
-    checks that request has been made by a taskqueue
+    Decorator that, when used in conjunction with our custom session middleware
+    returns a 401 response if the user is not logged in. Clients should use
+    this response to inform a client that they need to reauthenticate.
     """
+
     def _wrapper(request, *args, **kw):
+
         # check if the user's logged in
-        if request.is_superuser:
+        if request.user is not None:
             return func(request, *args, **kw)
-        else:
-            return HttpResponse('Access Denied')
+
+        # build and return response
+        msg = '{"error": "401 Unauthorized"}'
+        return HttpResponse(msg, content_type="application/json", status=401)
+
     return _wrapper
 
 
@@ -29,10 +38,13 @@ def render_as_json(view_method):
         Wrapper with arguments to invoke the method
         """
 
-        context = view_method(request, *args, **kwargs)
-        if issubclass(type(context), HttpResponse):
-            return context
-        return HttpResponse(json.dumps(context), content_type="application/json")
+        try:
+            context = view_method(request, *args, **kwargs)
+            status = 200
+        except HttpException as e:
+            context = '{"error": "%d %s"}' % (e.status, e.reason)
+            status = e.status
+        return HttpResponse(json.dumps(context), content_type="application/json", status=status)
 
     return _arguments_wrapper
 
@@ -43,13 +55,13 @@ def require_methods(methods):
     """
     def _method_wrapper(view_method):
         def _arguments_wrapper(request, *args, **kwargs) :
+
+            # check method is allowed
             if request.method in methods:
                 return view_method(request, *args, **kwargs)
-            else:
-                return HttpResponse(
-                    '{"error": "Method Not Allowed"}',
-                    content_type="application/json",
-                    status=405
-                )
+
+            # otherwise build and return a 405 response
+            msg = '{"error": "Method Not Allowed"}'
+            return HttpResponse(msg, content_type="application/json", status=405)
         return _arguments_wrapper
     return _method_wrapper

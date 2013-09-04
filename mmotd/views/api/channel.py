@@ -3,13 +3,13 @@ All channel related views go in here
 """
 # third-party imports
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 
 # local imports
 from mmotd.utils.channel_api import send_message
+from mmotd.views.api.decorators import login_required
 
 
-@csrf_exempt
+@login_required
 def relay_view(request):
 
     """

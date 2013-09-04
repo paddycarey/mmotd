@@ -10,7 +10,8 @@ urlpatterns = patterns('',
     url(r'^$', 'mmotd.views.template.unauthed.splash_view', name='template-unauthed-splash'),
     url(r'^game/$', 'mmotd.views.template.authed.game_view', name='template-authed-game'),
 
-    # taskqueue routes
-    url(r'^api/channel/relay/$', 'mmotd.views.api.channel.relay_view', name='api-channel-relay'),
+    # api routes
+    url(r'^api/channel_relay/$', 'mmotd.views.api.channel.relay_view', name='api-channel-relay'),
+    url(r'^api/channel_token/$', 'mmotd.views.api.ajax.token_view', name='api-ajax-token'),
 
 )
