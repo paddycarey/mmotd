@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+<title>Mapgen Test</title>
+
+<style>
+
+</style>
+
+</head>
+
+<body>
+
+<button id="genbut">Generate</button>
+
+<div id="mapview">
+
+	<canvas id="map"></canvas>
+
+</div>
+
+<script type="text/javascript" src="/js/dat.gui.min.js"></script>
+<script type="text/javascript">
+
+var MAP_WIDTH = 200, MAP_HEIGHT = 200,
+MAP_SPAWN_RATIO = 50,
+CA_PASSES = 6,
+CA_WALL_ADJ_COUNT = 4,
+CA_EMPTY_ADJ_COUNT = 5
+
+map = {};
+
+var tiles = {
+	empty: 0,
+	wall: 1
+};
+
+var rndInt = function(from, to) {
+
+    return Math.floor(Math.random() * (to - from + 1) + from);
+
+};
+
+var mapKey = function(x, y) {
+	return 'x' + x + '_y' + y;
+};
+
+var iterate = function(map, callback) {
+
+	for(var x = 0; x < MAP_WIDTH; x++) {
+		for(var y = 0; y < MAP_HEIGHT; y++) {
+			callback.call(this, map, x, y);
+		}
+	}
+};
+
+var generate = function() {
+
+	// randomly fill map with tiles
+	iterate(map, function(m, x, y) {
+
+		m[mapKey(x, y)] = (rndInt(0, 100) < MAP_SPAWN_RATIO) ? tiles.wall : tiles.empty;
+
+	});
+
+	// cellular automata passing
+	// tile becomes a wall if it's already a wall and has 4 adjacent wall tiles,
+	// or if it's not a wall and 5 adjacent ones are
+	var countAdjacentWalls = function(m, x, y) {
+
+		var count = 0;
+		var series = [
+			[x-1, y-1],
+			[x, y-1],
+			[x+1, y-1],
+			[x-1, y],
+			[x+1, y],
+			[x-1, y+1],
+			[x, y+1],
+			[x+1, y+1]
+		];
+
+		for (var i = 0, ln = series.length; i < ln; i++) {
+			var key = mapKey(series[i][0], series[i][1]);
+			if(m[key] !== undefined && m[key] == tiles.wall) count++;
+		};
+
+		return count;
+
+	};
+
+	for(var p = 0; p < CA_PASSES ; p++) {
+
+		iterate(map, function(m, x, y) {
+
+			var adjs = countAdjacentWalls(m, x, y);
+			var tile = map[mapKey(x, y)];
+
+			map[mapKey(x, y)] = ((tile == tiles.wall && adjs >= CA_WALL_ADJ_COUNT) || (tile == tiles.empty && adjs >= CA_EMPTY_ADJ_COUNT)) ? tiles.wall : tiles.empty;
+
+		});
+
+	}
+
+	// render map
+	var canvas = document.getElementById('map');
+	canvas.width = MAP_WIDTH;
+	canvas.height = MAP_HEIGHT;
+	var ctx = canvas.getContext('2d');
+	ctx.fillStyle = '#472400';
+
+	iterate(map, function(m, x, y) {
+
+		if(m[mapKey(x, y)]) ctx.fillRect(x, y, 1, 1);
+
+	});
+
+	canvas.style.width = canvas.style.height = '800px';
+	canvas.style.background = '#e0c266';
+
+}
+
+var button = document.getElementById('genbut');
+button.addEventListener('click', generate);
+
+var gui = new dat.GUI();
+gui.add(window, 'MAP_SPAWN_RATIO', 0, 100);
+gui.add(window, 'CA_PASSES', 0, 10);
+gui.add(window, 'CA_WALL_ADJ_COUNT', 0, 8);
+gui.add(window, 'CA_EMPTY_ADJ_COUNT', 0, 8);
+
+</script>
+
+</body>
+</html>
