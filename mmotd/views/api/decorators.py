@@ -61,7 +61,7 @@ def require_methods(methods):
                 return view_method(request, *args, **kwargs)
 
             # otherwise build and return a 405 response
-            msg = '{"error": "Method Not Allowed"}'
+            msg = '{"error": "405 Method Not Allowed"}'
             return HttpResponse(msg, content_type="application/json", status=405)
         return _arguments_wrapper
     return _method_wrapper
