@@ -21,7 +21,7 @@ def login_required(func):
     def _wrapper(request, *args, **kw):
 
         # check if the user's logged in
-        if request.user is not None:
+        if request.user:
             return func(request, *args, **kw)
 
         # build and return response
@@ -42,7 +42,7 @@ def render_as_json(view_method):
             context = view_method(request, *args, **kwargs)
             status = 200
         except HttpException as e:
-            context = '{"error": "%d %s"}' % (e.status, e.reason)
+            context = {'error': "%d %s" % (e.status, e.reason)}
             status = e.status
         return HttpResponse(json.dumps(context), content_type="application/json", status=status)
 

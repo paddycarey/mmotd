@@ -13,5 +13,6 @@ urlpatterns = patterns('',
     # api routes
     url(r'^api/channel_relay/$', 'mmotd.views.api.channel.relay_view', name='api-channel-relay'),
     url(r'^api/channel_token/$', 'mmotd.views.api.ajax.token_view', name='api-ajax-token'),
+    url(r'^api/game(?:/(?P<game_id>\d+))?/$', 'mmotd.views.api.ajax.game_view', name='api-ajax-game'),
 
 )

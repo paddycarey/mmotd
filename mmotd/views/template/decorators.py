@@ -16,7 +16,7 @@ def login_required(func):
     def _wrapper(request, *args, **kw):
 
         # check if the user's logged in
-        if request.user is not None:
+        if request.user:
             return func(request, *args, **kw)
 
         # redirect to login page after storing current url in session

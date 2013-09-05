@@ -16,14 +16,7 @@ class NdbTestCase(unittest.TestCase):
         self.testbed = testbed.Testbed()
         self.testbed.activate()
         # INIT ALL THE STUBS!
-        self.testbed.init_datastore_v3_stub()
-        self.testbed.init_memcache_stub()
-        self.testbed.init_images_stub()
-        self.testbed.init_blobstore_stub()
-        self.testbed.init_files_stub()
-
-    # def test_add(self):
-    #     self.assertEqual(1, 1)
+        self.testbed.init_all_stubs()
 
     def tearDown(self):
         # clean up the testbed after each test is run
