@@ -1,0 +1,62 @@
+Action: Create a new game
+=========================
+URL: /api/game/
+Method: POST
+Required login: Yes
+Payload type: application/x-www-form-urlencoded
+Response type: application/json
+Payload params:
+    {
+        'max_players': int: Arbitrary maximum number of players allowed in the game (max: 4)
+    }
+Example Response:
+    {
+        'id': 37957839456839587,
+        'created': '2013-09-05T19:59:37.075939',
+        'max_players': 4,
+        'players': ['9458739457', '3453453794587', '349857349587', '345987345987345'],
+    }
+
+
+Action: Join an existing game
+=============================
+URL: /api/game/<game_id:int>
+Method: POST
+Required login: Yes
+Payload type: application/x-www-form-urlencoded
+Response type: application/json
+Payload params:
+    {}
+Example Response:
+    {
+        'id': 37957839456839587,
+        'created': '2013-09-05T19:59:37.075939',
+        'max_players': 2,
+        'players': ['349857349587', '345987345987345'],
+    }
+
+
+Action: Fetch a channel token (used to connect to a socket)
+===========================================================
+URL: /api/channel_token/
+Method: GET
+Required login: Yes
+Response type: application/json
+Example Response:
+    {
+        'token': 'somebiglongtokenasastring',
+    }
+
+
+Action: Broadcast a channel message to the other players in the game
+====================================================================
+URL: /api/game/<game_id:int>
+Method: POST
+Required login: Yes
+Payload type: application/json
+Response type: application/json
+Payload params:
+    Not defined, just make sure it's valid JSON
+Example Response:
+    {'success': 'messages relayed'}
+    # Your message will be relayed to the other players in the game
