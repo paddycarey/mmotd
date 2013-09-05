@@ -20,13 +20,15 @@
 </div>
 
 <script type="text/javascript" src="/static/js/dat.gui.min.js"></script>
+<script type="text/javascript" src="/static/js/mersenne-twister.js"></script>
 <script type="text/javascript">
 
 var MAP_WIDTH = 200, MAP_HEIGHT = 200,
-MAP_SPAWN_RATIO = 50,
-CA_PASSES = 6,
+MAP_SPAWN_RATIO = 45,
+CA_PASSES = 8,
 CA_WALL_ADJ_COUNT = 4,
-CA_EMPTY_ADJ_COUNT = 5
+CA_EMPTY_ADJ_COUNT = 5,
+ME_SEED = 'creed',
 
 map = {};
 
@@ -35,9 +37,13 @@ var tiles = {
 	wall: 1
 };
 
-var rndInt = function(from, to) {
+var srand = new MersenneTwister(ME_SEED);
 
-    return Math.floor(Math.random() * (to - from + 1) + from);
+var rndInt = function(from, to, isSeeded) {
+
+	var rnd = (isSeeded) ? srand.random() : Math.random();
+
+    return Math.floor(rnd * (to - from + 1) + from);
 
 };
 
@@ -56,10 +62,12 @@ var iterate = function(map, callback) {
 
 var generate = function() {
 
+	if (ME_SEED != '') srand = new MersenneTwister(ME_SEED);
+
 	// randomly fill map with tiles
 	iterate(map, function(m, x, y) {
 
-		m[mapKey(x, y)] = (rndInt(0, 100) < MAP_SPAWN_RATIO) ? tiles.wall : tiles.empty;
+		m[mapKey(x, y)] = (rndInt(0, 100, true) < MAP_SPAWN_RATIO) ? tiles.wall : tiles.empty;
 
 	});
 
@@ -128,6 +136,7 @@ gui.add(window, 'MAP_SPAWN_RATIO', 0, 100);
 gui.add(window, 'CA_PASSES', 0, 10);
 gui.add(window, 'CA_WALL_ADJ_COUNT', 0, 8);
 gui.add(window, 'CA_EMPTY_ADJ_COUNT', 0, 8);
+gui.add(window, 'ME_SEED');
 
 </script>
 
