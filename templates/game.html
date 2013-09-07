@@ -1,49 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-    <title>Pixi Test</title>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" type="text/css" href="/static/css/screen.css" />
-    <script type="text/javascript" src="/static/js/pixi.js"></script>
-    <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
-    <script type="text/javascript" src="/static/js/lib.js"></script>
-    <script type="text/javascript" src="/static/js/game.js"></script>
-    <script type="text/javascript">
-        <!--
-        window.onload = function () {
-
-            var config = {
-                oGameObj   : document.getElementById('gameobj'),
-                oGameScore : document.getElementById('gamescore'),
-                oGameTools : document.getElementById('gametools'),
-                bg         : 0x66FF99,
-                iWidth     : 400,
-                iHeight    : 300
-            };
-
-            var game = new Game(config);
-            
-            var test = { var1:1, var2:2 };
-            
-            console.log(_.extend(game,test));
-            
-            requestAnimFrame( animate );
-
-            function animate () {
-                requestAnimFrame( animate );
-                game._animate();
-
-                game.renderer.render(game.stage);
-            }
-        };
-        -->
-    </script>
+<html>
+<head>
+    <title>Game</title>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+    <script data-main="/static/js/main" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </head>
 <body>
-
-<div id="gamescore"></div>
-<div id="gametools"></div>
-<div id="gameobj"></div>
 
 </body>
 </html>
