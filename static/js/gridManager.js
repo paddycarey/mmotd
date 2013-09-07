@@ -85,7 +85,7 @@ define(
 
             },
 
-            placeGridRect : function ( x, y, settings ) {
+            placeGridRect : function ( left, top, settings ) {
 
                 var defaults = {
                     fillStyle : "rgba(100, 100, 255, 0.2)"
@@ -93,7 +93,7 @@ define(
                 settings = _.extend(defaults,settings);
                 var sq = UIManager.canvas.getContext('2d');
                 sq.beginPath();
-                sq.rect(x, y, this.settings.gridAttrs.width, this.settings.gridAttrs.height);
+                sq.rect(left, top, this.settings.gridAttrs.width, this.settings.gridAttrs.height);
                 sq.fillStyle = settings.fillStyle;
                 sq.fill();
                 return sq;
@@ -185,11 +185,30 @@ define(
             assignActorClick : function ( gridPoint ) {
                 switch (gridPoint.actor.role) {
                     case 'defender':
-                        console.log('defend options');
+                        if (gridPoint.buildPoint !== false) {
+                            var x = gridPoint.left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
+                                y = gridPoint.top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
+                            UIManager.openActorToolbar( x, y );
+                        }
                     break;
                     case 'attacker':
-                        console.log('attack options');
+                        if (gridPoint.buildPoint !== false) {
+                            var x = gridPoint.left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
+                                y = gridPoint.top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
+                            UIManager.openActorToolbar( x, y );
+                        }
                     break;
+                }
+            },
+
+            showActorMoveOptions : function ( x, y, stepSize ) {
+                var l = (stepSize*2)+1;
+                for (var _x = x-stepSize, t = _x + l; _x < t; _x++) {
+                    for (var _y = y-stepSize, yt = _y + l; _y < yt; _y++) {
+                        if (!(x == _x && y == _y)) {
+                            this.placeGridRect( _x * this.settings.gridAttrs.width, _y * this.settings.gridAttrs.width, { fillStyle : "rgba(100, 200, 0, 0.2)" } );
+                        }
+                    }
                 }
             }
         };

@@ -40,17 +40,22 @@ define(
 
             },
 
+            lastClickedItem : function () {
+                return this.clickedItems[this.clickedItems.length - 1];
+            },
+
             assignTileToolbarButtonActions : function () {
                 var self = this;
                 
                 // ALL TEST BUTTONS AT THE MOMENT
                 
                 // ACTOR OPTS
+                // MOVE
                 document.getElementById('btn_a').onclick = function () {
-                    console.log('clicked a');
-                    self.openActorToolbar();
+                    self.Game.grid.showActorMoveOptions( self.lastClickedItem().gridPoint.x, self.lastClickedItem().gridPoint.y, 1 );
+                    self.closeActorToolbar();
                 };
-                
+                // ACTION
                 document.getElementById('btn_b').onclick = function () {
                     console.log('clicked b');
                     self.openActorToolbar();
@@ -63,8 +68,8 @@ define(
                 };
                 // ADD DEFENDER
                 document.getElementById('btn_d').onclick = function () {
-                    var actors = [  [   self.clickedItems[self.clickedItems.length - 1].gridPoint.x,
-                                        self.clickedItems[self.clickedItems.length - 1].gridPoint.y,
+                    var actors = [  [   self.lastClickedItem().gridPoint.x,
+                                        self.lastClickedItem().gridPoint.y,
                                         'defender']];
                     
                     // REVIEW HOW THIS IS DONE! NOT EFFICIENT (for bubbling)
@@ -76,8 +81,8 @@ define(
 
                 // ADD ATTACKER
                 document.getElementById('btn_e').onclick = function () {
-                    var actors = [  [   self.clickedItems[self.clickedItems.length - 1].gridPoint.x,
-                                        self.clickedItems[self.clickedItems.length - 1].gridPoint.y,
+                    var actors = [  [   self.lastClickedItem().gridPoint.x,
+                                        self.lastClickedItem().gridPoint.y,
                                         'attacker']];
                     
                     // REVIEW HOW THIS IS DONE! NOT EFFICIENT (for bubbling)
