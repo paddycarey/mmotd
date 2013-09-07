@@ -33,7 +33,8 @@ define(
                 this.initFrame();
                 this.createGrid();
                 this.placeBuildPoints();
-                //this.placeActorPoints();
+                this.placeActors();
+                
                 this.addMouseListeners();
             },
 
@@ -61,6 +62,7 @@ define(
                 var parent = this;
 
                 // CLICK
+                parent.interactiveObjs.click.reverse();
                 this.canvas.addEventListener('click', function(e) {
                     var x = e.pageX - parent.canvasOffsetLeft,
                         y = e.pageY - parent.canvasOffsetTop,
@@ -68,6 +70,7 @@ define(
                     if (collisions) {
                         for (obj in collisions) {
                             collisions[obj].click();
+                            if (collisions[obj].stopClickBubble) break;
                         }
                     }
                 });
@@ -187,10 +190,11 @@ define(
                     fillStyle : "rgba(255, 100, 100, 0.5)"
                 };
                 // STATIC DATA FOR NOW
-                var data = [    [3,1,'defender'],
+                var data = [    //[3,1,'defender'],
                                 [4,4,'defender'],
-                                [5,6,'attacker'],
-                                [8,8,'defender']];
+                                //[5,6,'attacker'],
+                                //[8,8,'defender']
+                                ];
                 for (var i = 0, t = data.length; i < t; i++) {
                     if (this.gridPoint[data[i][0]][data[i][1]].buildPoint !== false) {
                         this.gridPoint[data[i][0]][data[i][1]].actor = {
@@ -198,6 +202,18 @@ define(
                             role : data[i][2]
                         };
                         this.assignActorRoles(data[i][0], data[i][1], data[i][2]);
+
+                        this.makeInteractive({
+                            top        : data[i][1] * this.settings.gridAttrs.height,
+                            left       : data[i][0] * this.settings.gridAttrs.width,
+                            width      : this.settings.gridAttrs.width,
+                            height     : this.settings.gridAttrs.height,
+                            canvasElem : this.gridPoint[data[i][0]][data[i][1]].actor.sq,
+                            click      : (function(){
+                                console.log('imma actor');
+                            }),
+                            stopClickBubble : true
+                        });
                     }
                 }
             },

@@ -11,6 +11,7 @@ define(
     // Object
     function( Notification, GridManager, GameUtils ) {
         var GameContext = {
+
             initialize : function( settings ) {
                 var defaults = {};
                 this.settings = _.extend(defaults,settings);
@@ -21,7 +22,7 @@ define(
 
                     // CREATE CANVAS ELEM
                     this.grid = new GridManager(this.settings);
-                    
+
 
                     return true;
                 }
