@@ -10,6 +10,7 @@ require(
         // Object
         var App = {
             initialize : function() {
+                
                 this.Game = new Game({
                     domContainer : document.getElementById('game'),
                     frameAttrs : {

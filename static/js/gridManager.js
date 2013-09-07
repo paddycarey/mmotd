@@ -7,18 +7,12 @@ define(
     // Name
     'gridManager',
     // Dependencies
-    ['emitter'],
+    ['emitter', 'UIManager'],
     // Object
-    function ( Notification ) {
+    function ( Notification, UIManager ) {
         var GridmanagerContext = {
 
             gridPoint       : [], // gridPoint.x.y = GRID INFO
-            interactiveObjs : { // ADD ANY INTERACTIVE OBJECTS TO THIS
-                'click'     : [],
-                'mousedown' : [],
-                'mouseup'   : [],
-                'mousemove' : []
-            },
 
             initialize : function( settings ) {
                 var defaults = {
@@ -28,6 +22,7 @@ define(
                     },
                     canvasBackground : "url('/static/imgs/grid_40x40.jpg')"
                 };
+
                 this.settings = _.extend(defaults,settings);
 
                 this.initFrame();
@@ -35,57 +30,22 @@ define(
                 this.placeBuildPoints();
                 this.placeActors();
                 
-                this.addMouseListeners();
             },
 
             initFrame : function() {
-                
+
                 // CREATE CANVAS ELEMENT
-                this.canvas = document.createElement('canvas');
-                this.canvas.height = this.settings.frameAttrs.height;
-                this.canvas.width = this.settings.frameAttrs.width;
+                UIManager.canvas = document.createElement('canvas');
+                UIManager.canvas.height = this.settings.frameAttrs.height;
+                UIManager.canvas.width = this.settings.frameAttrs.width;
 
                 // SET CANVAS STYLES
-                this.canvas.style.backgroundImage = this.settings.canvasBackground;
+                UIManager.canvas.style.backgroundImage = this.settings.canvasBackground;
 
                 // ASSIGN CANVAS TO DOM
-                this.settings.domContainer.appendChild(this.canvas);
-
-                // FIGURE OUT OFFSETS
-                this.canvasOffsetLeft = this.settings.domContainer.offsetLeft;
-                this.canvasOffsetTop = this.settings.domContainer.offsetTop;
+                this.settings.domContainer.appendChild(UIManager.canvas);
 
                 return false;
-            },
-
-            addMouseListeners : function () {
-                var parent = this;
-
-                // CLICK
-                parent.interactiveObjs.click.reverse();
-                this.canvas.addEventListener('click', function(e) {
-                    var x = e.pageX - parent.canvasOffsetLeft,
-                        y = e.pageY - parent.canvasOffsetTop,
-                        collisions = parent.collisionDetection(parent.interactiveObjs.click, x, y);
-                    if (collisions) {
-                        for (obj in collisions) {
-                            collisions[obj].click();
-                            if (collisions[obj].stopClickBubble) break;
-                        }
-                    }
-                });
-            },
-
-            collisionDetection : function ( collection, x, y ) {
-                // COLLISION DETECTION
-                var hit = [];
-                for (var i = 0, l = collection.length; i < l; i++) {
-                    if (y > collection[i].top && y < collection[i].top + collection[i].height 
-                        && x > collection[i].left && x < collection[i].left + collection[i].width) {
-                            hit.push(collection[i]);
-                    }
-                }
-                return (hit.length === 0) ? false : hit;
             },
 
             createGrid : function () {
@@ -103,44 +63,35 @@ define(
                     if (typeof(this.gridPoint[x]) == 'undefined') {
                         this.gridPoint[x] = [];
                     }
+
+                    var left = (x * this.settings.gridAttrs.width),
+                        top  = (y * this.settings.gridAttrs.height);
+
                     this.gridPoint[x][y] = {
-                        sq         : this.placeGridRect ( x, y ),
+                        sq         : this.placeGridRect ( left, top ),
                         buildPoint : false,
                         actor      : false,
                         x          : x,
-                        y          : y
+                        y          : y,
+                        top        : top,
+                        left       : left,
                     }
                 }
 
             },
 
             placeGridRect : function ( x, y, settings ) {
+
                 var defaults = {
                     fillStyle : "rgba(100, 100, 255, 0.2)"
                 };
                 settings = _.extend(defaults,settings);
-                x *= this.settings.gridAttrs.width;
-                y *= this.settings.gridAttrs.width;
-                var sq = this.canvas.getContext('2d');
+                var sq = UIManager.canvas.getContext('2d');
                 sq.beginPath();
                 sq.rect(x, y, this.settings.gridAttrs.width, this.settings.gridAttrs.height);
                 sq.fillStyle = settings.fillStyle;
                 sq.fill();
                 return sq;
-            },
-
-            makeInteractive : function (data) {
-                var defaults = {
-                    mousedown : false,
-                    mouseup   : false,
-                    mousemove : false,
-                    click     : false
-                };
-                for (var type in defaults) {
-                    if (typeof(data[type]) !== 'undefined') {
-                        this.interactiveObjs[type].push(data);
-                    }
-                }
             },
 
             /**
@@ -152,6 +103,7 @@ define(
                 var buildSettings = {
                     fillStyle : "rgba(100, 255, 100, 0.5)"
                 };
+                var self = this;
                 // STATIC DATA FOR NOW
                 var data = [    [3,1],
                                 [4,4],
@@ -159,22 +111,20 @@ define(
                                 [8,8]];
                 for (var i = 0, t = data.length; i < t; i++) {
                     this.gridPoint[data[i][0]][data[i][1]].buildPoint = {
-                        sq   : this.placeGridRect(data[i][0], data[i][1], buildSettings),
+                        sq   : this.placeGridRect(data[i][0] * this.settings.gridAttrs.width, data[i][1] * this.settings.gridAttrs.height, buildSettings),
                         role : 'builder'
                     };
-                    this.assignBuilderRole(data[i][0], data[i][1]);
 
-                    this.makeInteractive({
+                    UIManager.makeInteractive({
                         top        : data[i][1] * this.settings.gridAttrs.height,
                         left       : data[i][0] * this.settings.gridAttrs.width,
                         width      : this.settings.gridAttrs.width,
                         height     : this.settings.gridAttrs.height,
                         canvasElem : this.gridPoint[data[i][0]][data[i][1]].buildPoint.sq,
                         click      : (function(){
-                            var a = 7;
-                            var b = 4;
-                            console.log(a*b);
-                        })
+                            self.assignBuilderClick(this.gridPoint);
+                        }),
+                        gridPoint : this.gridPoint[data[i][0]][data[i][1]]
                     });
                 }
             },
@@ -189,51 +139,58 @@ define(
                 var actorSettings = {
                     fillStyle : "rgba(255, 100, 100, 0.5)"
                 };
+                var self = this;
                 // STATIC DATA FOR NOW
                 var data = [    //[3,1,'defender'],
                                 [4,4,'defender'],
-                                //[5,6,'attacker'],
+                                [5,6,'attacker'],
                                 //[8,8,'defender']
                                 ];
                 for (var i = 0, t = data.length; i < t; i++) {
-                    if (this.gridPoint[data[i][0]][data[i][1]].buildPoint !== false) {
-                        this.gridPoint[data[i][0]][data[i][1]].actor = {
-                            sq   : this.placeGridRect(data[i][0], data[i][1], actorSettings),
-                            role : data[i][2]
-                        };
-                        this.assignActorRoles(data[i][0], data[i][1], data[i][2]);
+                    this.gridPoint[data[i][0]][data[i][1]].actor = {
+                        sq   : this.placeGridRect(data[i][0] * this.settings.gridAttrs.width, data[i][1] * this.settings.gridAttrs.height, actorSettings),
+                        role : data[i][2]
+                    };
 
-                        this.makeInteractive({
-                            top        : data[i][1] * this.settings.gridAttrs.height,
-                            left       : data[i][0] * this.settings.gridAttrs.width,
-                            width      : this.settings.gridAttrs.width,
-                            height     : this.settings.gridAttrs.height,
-                            canvasElem : this.gridPoint[data[i][0]][data[i][1]].actor.sq,
-                            click      : (function(){
-                                console.log('imma actor');
-                            }),
-                            stopClickBubble : true
-                        });
-                    }
+                    UIManager.makeInteractive({
+                        top        : data[i][1] * this.settings.gridAttrs.height,
+                        left       : data[i][0] * this.settings.gridAttrs.width,
+                        width      : this.settings.gridAttrs.width,
+                        height     : this.settings.gridAttrs.height,
+                        canvasElem : this.gridPoint[data[i][0]][data[i][1]].actor.sq,
+                        click      : (function(){
+                            self.assignActorClick(this.gridPoint);
+                        }),
+                        stopClickBubble : true,
+                        gridPoint : this.gridPoint[data[i][0]][data[i][1]]
+                    });
                 }
             },
 
             /**
-              * assignBuilderRole
+              * assignBuilderClick
               * If a tile can be built upon, this method will be called for it
               **/
-            assignBuilderRole : function ( x, y ) {
-                if (this.gridPoint[x][y].buildPoint !== false) {
-                    //this.gridPoint[x][y].sq.style.display = 'none';
-                    //console.log(this.gridPoint[x][y].sq);
+            assignBuilderClick : function ( gridPoint ) {
+                if (gridPoint.buildPoint !== false) {
+                    var x = gridPoint.left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
+                        y = gridPoint.top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
+                    UIManager.openTileToolbar( x, y );
                 }
             },
 
             /**
-              * assignActorRoles
+              * assignActorClick
               **/
-            assignActorRoles : function ( x, y, role ) {
-                //this.gridPoint[x][y].actor;
+            assignActorClick : function ( gridPoint ) {
+                switch (gridPoint.actor.role) {
+                    case 'defender':
+                        console.log('defend options');
+                    break;
+                    case 'attacker':
+                        console.log('attack options');
+                    break;
+                }
             }
         };
         return function( settings ) {

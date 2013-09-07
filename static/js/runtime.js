@@ -9,21 +9,18 @@ define(
     // Dependencies
     ['emitter','UIManager'], 
     // Object
-    function ( Notifcation, UI ) {
-        // Game session is isolated from actual defination logic
-        var RuntimeContext = function( Game ) {
-            this.Game = Game;
-            this.initialize();
+    function ( Notifcation, UIManager ) {
+        var RuntimeContext = {
+            initialize : function( Game ) {
+                this.Game = Game;
+                UIManager.initialize( this.Game );
+            }
         };
-        RuntimeContext.prototype.initialize = function() {
-            // start the game
-            // begin UI
-            UI.begin( this.Game );
-        };
-        RuntimeContext.prototype.end = function() {
-            // end game
-            Notification.emit('endGame',state);
+
+        return function( Game ) {
+            _.extend(this,this);
+            RuntimeContext.initialize( Game );
+            return RuntimeContext;
         }
-        return RuntimeContext;
     }
 );

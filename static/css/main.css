@@ -1,0 +1,18 @@
+#toolPopup { 
+    background:#333;
+    color:#FFF;
+    display:none;
+    padding:10px;
+    position:absolute;
+    top:20px;
+    left:200px;
+    z-index:2;
+}
+#toolPopup span { 
+    background:#fff;
+    color:#222;
+    cursor:pointer;
+    display:inline-block;
+    padding:10px;
+    text-decoration: none;
+}

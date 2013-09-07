@@ -20,6 +20,10 @@ define(
             load : function() {
                 if (this.settings.domContainer) {
 
+                    // WORK OUT OFFSETS
+                    this.settings.canvasOffsetLeft = this.settings.domContainer.offsetLeft;
+                    this.settings.canvasOffsetTop = this.settings.domContainer.offsetTop;
+
                     // CREATE CANVAS ELEM
                     this.grid = new GridManager(this.settings);
 
