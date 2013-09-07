@@ -7,25 +7,25 @@ define(
     // Name
     'game', 
     // Dependencies
-    ['emitter','coordManager','gameUtils'], 
-    function( Notification, CoordManager, GameUtils ) {
+    ['emitter','gridManager','gameUtils'], 
+    // Object
+    function( Notification, GridManager, GameUtils ) {
         var GameContext = {
             initialize : function( settings ) {
                 var defaults = {};
                 this.settings = _.extend(defaults,settings);
-                /*
-                Notification.on('switch', function() {
-                    this.utils.Pixi.render();
-                }, this);
-                Notification.on('endGame',function( state ) {
-                    this.teardown(state);
-                }, this);
-                */
             },
             utils : GameUtils,
-            Coords : CoordManager,
             load : function() {
-                return true;
+                if (this.settings.domContainer) {
+
+                    // CREATE CANVAS ELEM
+                    this.grid = new GridManager(this.settings);
+                    
+
+                    return true;
+                }
+                return false;
             }
         };
         return function( settings ) {

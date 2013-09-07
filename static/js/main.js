@@ -11,12 +11,11 @@ require(
         var App = {
             initialize : function() {
                 this.Game = new Game({
-                    seed : 'creed',
-                    ratios : {
-                        map : 8,
-                        invert : 'random'
-                    },
-                    user : { /**/ }
+                    domContainer : document.getElementById('game'),
+                    frameAttrs : {
+                        height : 400,
+                        width  : 640
+                    }
                 });
 
                 if (this.Game.load() ) {

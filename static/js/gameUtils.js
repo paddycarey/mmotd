@@ -9,7 +9,7 @@ define(
     // Dependencies
     ['emitter'], 
     // Object
-    function ( Notifcation ) {
+    function ( Notification ) {
         return {
             
         }
