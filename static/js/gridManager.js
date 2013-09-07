@@ -23,12 +23,17 @@ define(
                     canvasBackground : "url('/static/imgs/grid_40x40.jpg')"
                 };
 
+                // STATIC DATA FOR NOW
+                var actors = [  [4,4,'defender'],
+                                [5,6,'attacker']
+                                ];
+
                 this.settings = _.extend(defaults,settings);
 
                 this.initFrame();
                 this.createGrid();
                 this.placeBuildPoints();
-                this.placeActors();
+                this.placeActors( actors );
                 
             },
 
@@ -134,18 +139,13 @@ define(
               * This should place any actor elements onto the grid. Attaches data
               * onto this.gridPoint[x][y].actor
               **/
-            placeActors : function () {
+            placeActors : function ( data ) {
                 // CONFIG
                 var actorSettings = {
                     fillStyle : "rgba(255, 100, 100, 0.5)"
                 };
                 var self = this;
-                // STATIC DATA FOR NOW
-                var data = [    //[3,1,'defender'],
-                                [4,4,'defender'],
-                                [5,6,'attacker'],
-                                //[8,8,'defender']
-                                ];
+                
                 for (var i = 0, t = data.length; i < t; i++) {
                     this.gridPoint[data[i][0]][data[i][1]].actor = {
                         sq   : this.placeGridRect(data[i][0] * this.settings.gridAttrs.width, data[i][1] * this.settings.gridAttrs.height, actorSettings),
@@ -175,7 +175,7 @@ define(
                 if (gridPoint.buildPoint !== false) {
                     var x = gridPoint.left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
                         y = gridPoint.top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
-                    UIManager.openTileToolbar( x, y );
+                    UIManager.openBuilderToolbar( x, y );
                 }
             },
 

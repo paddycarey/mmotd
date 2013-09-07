@@ -1,18 +1,30 @@
-#toolPopup { 
+.popup {
     background:#333;
     color:#FFF;
-    display:none;
+    /*display:none;*/
     padding:10px;
+    display:none;
     position:absolute;
     top:20px;
     left:200px;
     z-index:2;
 }
-#toolPopup span { 
+
+.popup span {
     background:#fff;
     color:#222;
     cursor:pointer;
     display:inline-block;
     padding:10px;
     text-decoration: none;
+}
+
+.popup ul {
+    padding:0;
+    margin:0;
+    list-style:none;
+}
+
+.popup ul li ul {
+    display: none;
 }

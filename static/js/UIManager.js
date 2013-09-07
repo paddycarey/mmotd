@@ -1,7 +1,7 @@
 /**
   * ui.js
   * 
-  * 
+  * This file is pretty shitty at the moment - need to merge methods & add params etc
   **/
 define(
     // Name
@@ -13,14 +13,16 @@ define(
 
         return {
 
-            events          : [],
-            domTileToolbar  : document.getElementById('toolPopup'),
-            canvas          : document.createElement('canvas'),
-            interactiveObjs : { // ADD ANY INTERACTIVE OBJECTS TO THIS
-                'click'     : [],
-                'mousedown' : [],
-                'mouseup'   : [],
-                'mousemove' : []
+            clickedItems      : [],
+            mousedown         : false,
+            domActorToolbar   : document.getElementById('actorPopup'),
+            domBuilderToolbar : document.getElementById('builderPopup'),
+            canvas            : document.createElement('canvas'),
+            interactiveObjs   : { // ADD ANY INTERACTIVE OBJECTS TO THIS
+                'click'       : [],
+                'mousedown'   : [],
+                'mouseup'     : [],
+                'mousemove'   : []
             },
 
             initialize : function( Game ) {
@@ -40,48 +42,70 @@ define(
 
             assignTileToolbarButtonActions : function () {
                 var self = this;
-                // TEST BTN A
+                
+                // ALL TEST BUTTONS AT THE MOMENT
+                
+                // ACTOR OPTS
                 document.getElementById('btn_a').onclick = function () {
                     console.log('clicked a');
-                    self.closeTileToolbar();
+                    self.openActorToolbar();
                 };
-                // TEST BTN B
+                
                 document.getElementById('btn_b').onclick = function () {
                     console.log('clicked b');
-                    self.closeTileToolbar();
+                    self.openActorToolbar();
+                };
+                
+                // BUILDER OPTS
+                document.getElementById('btn_c').onclick = function () {
+                    console.log('clicked c');
+                    document.getElementById('builderPopupOpts').style.display = 'block';
+                };
+                // ADD DEFENDER
+                document.getElementById('btn_d').onclick = function () {
+                    var actors = [  [   self.clickedItems[self.clickedItems.length - 1].gridPoint.x,
+                                        self.clickedItems[self.clickedItems.length - 1].gridPoint.y,
+                                        'defender']];
+                    
+                    // REVIEW HOW THIS IS DONE! NOT EFFICIENT (for bubbling)
+                    self.interactiveObjs.click.reverse();
+                    self.Game.grid.placeActors( actors );
+                    self.closeBuilderToolbar();
+                    self.interactiveObjs.click.reverse();
+                };
+
+                // ADD ATTACKER
+                document.getElementById('btn_e').onclick = function () {
+                    var actors = [  [   self.clickedItems[self.clickedItems.length - 1].gridPoint.x,
+                                        self.clickedItems[self.clickedItems.length - 1].gridPoint.y,
+                                        'attacker']];
+                    
+                    // REVIEW HOW THIS IS DONE! NOT EFFICIENT (for bubbling)
+                    self.interactiveObjs.click.reverse();
+                    self.Game.grid.placeActors( actors );
+                    self.closeBuilderToolbar();
+                    self.interactiveObjs.click.reverse();
                 };
             },
 
-            openTileToolbar : function ( x, y ) {
-                this.domTileToolbar.style.display = 'block';
-                this.domTileToolbar.style.left = x + 'px';
-                this.domTileToolbar.style.top = y + 'px';
+            openActorToolbar : function ( x, y ) {
+                this.domActorToolbar.style.display = 'block';
+                this.domActorToolbar.style.left = x + 'px';
+                this.domActorToolbar.style.top = y + 'px';
             },
 
-            closeTileToolbar : function () {
-                this.domTileToolbar.style.display = 'none';
+            closeActorToolbar : function () {
+                this.domActorToolbar.style.display = 'none';
             },
 
-            add : function( events ) {
-                /**/
+            openBuilderToolbar : function ( x, y ) {
+                this.domBuilderToolbar.style.display = 'block';
+                this.domBuilderToolbar.style.left = x + 'px';
+                this.domBuilderToolbar.style.top = y + 'px';
             },
 
-            loadEvents : function () {
-                var parent = this;
-
-                // CLICK
-                this.interactiveObjs.click.reverse();
-                this.canvas.addEventListener('click', function(e) {
-                    var x = e.pageX - parent.settings.canvasOffsetLeft,
-                        y = e.pageY - parent.settings.canvasOffsetTop,
-                        collisions = parent.collisionDetection(parent.interactiveObjs.click, x, y);
-                    if (collisions) {
-                        for (obj in collisions) {
-                            collisions[obj].click();
-                            if (collisions[obj].stopClickBubble) break;
-                        }
-                    }
-                });
+            closeBuilderToolbar : function () {
+                this.domBuilderToolbar.style.display = 'none';
             },
 
             makeInteractive : function (data) {
@@ -108,6 +132,39 @@ define(
                     }
                 }
                 return (hit.length === 0) ? false : hit;
+            },
+
+            loadEvents : function () {
+
+                var self = this;
+
+                // CLICK
+                this.interactiveObjs.click.reverse();
+                this.canvas.addEventListener('click', function(e) {
+                    self.clickedItems = []; // Reset
+                    var x = e.pageX - self.settings.canvasOffsetLeft,
+                        y = e.pageY - self.settings.canvasOffsetTop,
+                        collisions = self.collisionDetection(self.interactiveObjs.click, x, y);
+                    if (collisions) {
+                        for (obj in collisions) {
+                            self.clickedItems.push(collisions[obj]);
+                            collisions[obj].click();
+                            if (collisions[obj].stopClickBubble) break;
+                        }
+                    }
+                }, false);
+                this.canvas.addEventListener('mousedown', function(e) {
+                    self.mousedown = true;
+                });
+                document.addEventListener('mouseup', function(e) {
+                    self.mousedown = false;
+                });
+                this.canvas.addEventListener('mousemove', function(e) {
+                    if (self.mousedown) {
+                        // DRAG
+
+                    }
+                });
             },
         }
     }
