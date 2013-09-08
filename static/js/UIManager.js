@@ -69,6 +69,10 @@ define(
                 return this.clickedItems[this.clickedItems.length - 1];
             },
 
+            /**
+              * assignTileToolbarButtonActions
+              * Add functionality to the buttons which appear in the popup toolbars
+              **/
             assignTileToolbarButtonActions : function () {
                 var self = this;
                 
@@ -77,7 +81,7 @@ define(
                 // ACTOR OPTS
                 // MOVE
                 document.getElementById('btn_a').onclick = function () {
-                    self.Grid.showActorMoveOptions( self.lastClickedItem().gridPoint.x, self.lastClickedItem().gridPoint.y, 1 );
+                    self.Grid.showActorMoveOptions( self.lastClickedItem().x, self.lastClickedItem().y, 1 );
                     self.closeActorToolbar();
                 };
                 // ACTION
@@ -92,8 +96,8 @@ define(
                 };
                 // ADD DEFENDER
                 document.getElementById('btn_d').onclick = function () {
-                    var actors = [  [   self.lastClickedItem().gridPoint.x,
-                                        self.lastClickedItem().gridPoint.y,
+                    var actors = [  [   self.lastClickedItem().x,
+                                        self.lastClickedItem().y,
                                         'defender']];
                     
                     // REVIEW HOW THIS IS DONE! NOT EFFICIENT (for bubbling)
@@ -105,8 +109,8 @@ define(
 
                 // ADD ATTACKER
                 document.getElementById('btn_e').onclick = function () {
-                    var actors = [  [   self.lastClickedItem().gridPoint.x,
-                                        self.lastClickedItem().gridPoint.y,
+                    var actors = [  [   self.lastClickedItem().x,
+                                        self.lastClickedItem().y,
                                         'attacker']];
                     
                     // REVIEW HOW THIS IS DONE! NOT EFFICIENT (for bubbling)
@@ -117,22 +121,38 @@ define(
                 };
             },
 
+            /**
+              * openActorToolbar
+              * Make the toolbar which appears for actors appear
+              **/
             openActorToolbar : function ( x, y, role ) {
                 this.domActorToolbar.style.display = 'block';
                 this.domActorToolbar.style.left = x + 'px';
                 this.domActorToolbar.style.top = y + 'px';
             },
 
+            /**
+              * closeActorToolbar
+              * Make the toolbar which appears for actors disappear
+              **/
             closeActorToolbar : function () {
                 this.domActorToolbar.style.display = 'none';
             },
 
+            /**
+              * openBuilderToolbar
+              * Make the toolbar which appears for builder tiles appear
+              **/
             openBuilderToolbar : function ( x, y ) {
                 this.domBuilderToolbar.style.display = 'block';
                 this.domBuilderToolbar.style.left = x + 'px';
                 this.domBuilderToolbar.style.top = y + 'px';
             },
 
+            /**
+              * openBuilderToolbar
+              * Make the toolbar which appears for builder tiles disappear
+              **/
             closeBuilderToolbar : function () {
                 this.domBuilderToolbar.style.display = 'none';
                 document.getElementById('builderPopupOpts').style.display = 'block';
@@ -155,6 +175,10 @@ define(
                 this.Grid = obj;
             },
 
+            /**
+              * makeInteractive
+              * Add click / mousedown / mouseup / mousemove interactivity to tiles
+              **/
             makeInteractive : function (data) {
                 var defaults = {
                     mousedown : false,
@@ -169,6 +193,10 @@ define(
                 }
             },
 
+            /**
+              * collisionDetection
+              * Takes an x and y co-ord (from cursor) and checks to see what items it collides with
+              **/
             collisionDetection : function ( collection, x, y ) {
                 // COLLISION DETECTION
                 var hit = [];
@@ -181,6 +209,10 @@ define(
                 return (hit.length === 0) ? false : hit;
             },
 
+            /**
+              * loadEvents
+              * Adds scene event listeners
+              **/
             loadEvents : function () {
 
                 var self = this;

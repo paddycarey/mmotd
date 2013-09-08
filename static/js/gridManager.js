@@ -52,14 +52,14 @@ define(
                     if (i != 0 && (x == 0)) {
                         y++;
                     }
-                    if (typeof(this.gridPoint[x]) == 'undefined') {
-                        this.gridPoint[x] = [];
+                    if (typeof(this.plot[x]) == 'undefined') {
+                        this.plot[x] = [];
                     }
 
                     var left = (x * this.settings.gridAttrs.width),
                         top  = (y * this.settings.gridAttrs.height);
 
-                    this.gridPoint[x][y] = {
+                    this.plot[x][y] = {
                         sq         : this.placeGridRect ( left, top ),
                         buildPoint : false,
                         actor      : false,
@@ -106,7 +106,7 @@ define(
                                 [5,6],
                                 [8,8]];
                 for (var i = 0, t = data.length; i < t; i++) {
-                    this.gridPoint[data[i][0]][data[i][1]].buildPoint = {
+                    this.plot[data[i][0]][data[i][1]].buildPoint = {
                         sq   : this.placeGridRect(data[i][0] * this.settings.gridAttrs.width, data[i][1] * this.settings.gridAttrs.height, buildSettings),
                         role : 'builder'
                     };
@@ -116,11 +116,11 @@ define(
                         left       : data[i][0] * this.settings.gridAttrs.width,
                         width      : this.settings.gridAttrs.width,
                         height     : this.settings.gridAttrs.height,
-                        canvasElem : this.gridPoint[data[i][0]][data[i][1]].buildPoint.sq,
+                        x          : data[i][0],
+                        y          : data[i][1],
                         click      : (function(){
-                            self.assignBuilderClick(this.gridPoint);
-                        }),
-                        gridPoint : this.gridPoint[data[i][0]][data[i][1]]
+                            self.assignBuilderClick( this.x, this.y );
+                        })
                     });
                 }
             },
@@ -128,7 +128,7 @@ define(
             /**
               * placeActors
               * This should place any actor elements onto the grid. Attaches data
-              * onto this.gridPoint[x][y].actor
+              * onto this.plot[x][y].actor
               **/
             placeActors : function ( data ) {
                 // CONFIG
@@ -138,7 +138,7 @@ define(
                 var self = this;
                 
                 for (var i = 0, t = data.length; i < t; i++) {
-                    this.gridPoint[data[i][0]][data[i][1]].actor = {
+                    this.plot[data[i][0]][data[i][1]].actor = {
                         sq   : this.placeGridRect(data[i][0] * this.settings.gridAttrs.width, data[i][1] * this.settings.gridAttrs.height, actorSettings),
                         role : data[i][2]
                     };
@@ -148,12 +148,13 @@ define(
                         left       : data[i][0] * this.settings.gridAttrs.width,
                         width      : this.settings.gridAttrs.width,
                         height     : this.settings.gridAttrs.height,
-                        canvasElem : this.gridPoint[data[i][0]][data[i][1]].actor.sq,
+                        x          : data[i][0],
+                        y          : data[i][1],
                         click      : (function(){
-                            self.assignActorClick(this.gridPoint);
+                            self.assignActorClick( this.x, this.y );
                         }),
                         stopClickBubble : true,
-                        gridPoint : this.gridPoint[data[i][0]][data[i][1]]
+                        plot       : self.plot[data[i][0]][data[i][1]]
                     });
                 }
             },
@@ -162,10 +163,10 @@ define(
               * assignBuilderClick
               * Clicked on a tile that can have something built on it
               **/
-            assignBuilderClick : function ( gridPoint ) {
-                if (gridPoint.buildPoint !== false) {
-                    var left = gridPoint.left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
-                        top  = gridPoint.top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
+            assignBuilderClick : function ( x, y ) {
+                if (this.plot[x][y].buildPoint !== false) {
+                    var left = this.plot[x][y].left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
+                        top  = this.plot[x][y].top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
                     this.UIManager.openBuilderToolbar( left, top );
                 }
             },
@@ -174,10 +175,10 @@ define(
               * assignActorClick
               * Clicked an actor on the stage (eg. builder / defender)
               **/
-            assignActorClick : function ( gridPoint ) {
-                var left = gridPoint.left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
-                    top  = gridPoint.top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
-                this.UIManager.openActorToolbar( left, top, gridPoint.actor.role );
+            assignActorClick : function ( x, y ) {
+                var left = this.plot[x][y].left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
+                    top  = this.plot[x][y].top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
+                this.UIManager.openActorToolbar( left, top, this.plot[x][y].actor.role );
             },
 
             /**
