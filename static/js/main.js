@@ -6,9 +6,10 @@
 require(
     // Dependencies
     ['game','runtime'],
+    // Object
     function( Game, Runtime) {
-        // Object
         var App = {
+
             initialize : function() {
                 
                 this.Game = new Game({
@@ -19,16 +20,20 @@ require(
                     }
                 });
 
-                if (this.Game.load() ) {
+                if (this.Game.ready()) {
                     this.beginSession();
-                };
+                }
+
             }, 
+
             beginSession : function() {
                 this.session = new Runtime( this.Game );
             },
+
             endSession : function() {
                 this.session.end();
             }
+
         };
         App.initialize();
     }

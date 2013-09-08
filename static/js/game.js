@@ -7,35 +7,52 @@ define(
     // Name
     'game', 
     // Dependencies
-    ['emitter','UIManager', 'gridManager','gameUtils'], 
+    ['grid'], 
     // Object
-    function( Notification, UIManager, GridManager, GameUtils ) {
+    function( GridManager ) {
+
         var GameContext = {
 
-            initialize : function( settings ) {
-                var defaults = {};
+            dataTimestamp : 0,
+
+            initialize : function ( settings ) {
+
+                var defaults = {
+                    frameAttrs : {
+                        height : 400,
+                        width  : 640
+                    }
+                };
                 this.settings = _.extend(defaults,settings);
+
+                this.Grid = new GridManager(this.settings);
+                this.Grid.initiateGrid();
+
             },
-            utils : GameUtils,
-            load : function() {
-                if (this.settings.domContainer) {
 
-                    // WORK OUT OFFSETS
-                    this.settings.canvasOffsetLeft = this.settings.domContainer.offsetLeft;
-                    this.settings.canvasOffsetTop = this.settings.domContainer.offsetTop;
-
-                    // CALL LIBS REQUIRED TO START GAME
-                    this.uiManager = new UIManager(this.settings);
-                    this.grid = new GridManager(this.settings, this.uiManager);
-                    this.uiManager.setGrid(this.grid);
-                    this.uiManager.assignControls(this.grid);
-
-
-                    return true;
+            setData : function (data) {
+                if (this.dataTimestamp !== data.tstamp) {
+                    this.Grid.updatePlots = [];
+                    this.dataTimestamp = data.tstamp;
+                    this.Grid.plot = data.plots;
+                    for(var x in this.Grid.plot) {
+                        for(var y in this.Grid.plot[x]) {
+                            this.Grid.updatePlots.push([parseInt(x),parseInt(y)]);
+                        }
+                    }
                 }
-                return false;
+            },
+
+            /**
+              * ready
+              * Called by main - starts runtime
+              **/
+            ready : function () {
+                return true;
             }
+
         };
+
         return function( settings ) {
             _.extend(this,this);
             GameContext.initialize(settings);
