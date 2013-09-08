@@ -7,9 +7,9 @@ define(
     // Name
     'game', 
     // Dependencies
-    ['emitter','gridManager','gameUtils'], 
+    ['emitter','UIManager', 'gridManager','gameUtils'], 
     // Object
-    function( Notification, GridManager, GameUtils ) {
+    function( Notification, UIManager, GridManager, GameUtils ) {
         var GameContext = {
 
             initialize : function( settings ) {
@@ -24,8 +24,11 @@ define(
                     this.settings.canvasOffsetLeft = this.settings.domContainer.offsetLeft;
                     this.settings.canvasOffsetTop = this.settings.domContainer.offsetTop;
 
-                    // CREATE CANVAS ELEM
-                    this.grid = new GridManager(this.settings);
+                    // CALL LIBS REQUIRED TO START GAME
+                    this.uiManager = new UIManager(this.settings);
+                    this.grid = new GridManager(this.settings, this.uiManager);
+                    this.uiManager.setGrid(this.grid);
+                    this.uiManager.assignControls(this.grid);
 
 
                     return true;

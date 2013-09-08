@@ -11,7 +11,7 @@ define(
     // Object
     function ( Notifcation ) {
 
-        return {
+        var UIManagerContext = {
 
             clickedItems      : [],
             mousedown         : false,
@@ -24,22 +24,47 @@ define(
                 'mouseup'     : [],
                 'mousemove'   : []
             },
+            Grid              : false,
 
-            initialize : function( Game ) {
+            initialize : function( settings ) {
 
                 var defaults = {
-                    
+                    gridAttrs : {
+                        height : 40,
+                        width  : 40
+                    },
+                    canvasBackground : "url('/static/imgs/grid_40x40.jpg')"
                 };
-                this.settings = _.extend(defaults, Game.settings);
-                
-                this.Game = Game;
-                
-                this.assignTileToolbarButtonActions();
+                this.settings = _.extend(defaults, settings);
 
-                this.loadEvents();
+                // CREATE CANVAS ELEM
+                this.initFrame();
 
             },
 
+            /**
+              * initFrame
+              * Create the canvas element and set its attributes
+              **/
+            initFrame : function() {
+
+                // CREATE CANVAS ELEMENT
+                this.canvas = document.createElement('canvas');
+                this.canvas.height = this.settings.frameAttrs.height;
+                this.canvas.width = this.settings.frameAttrs.width;
+
+                // SET CANVAS STYLES
+                this.canvas.style.backgroundImage = this.settings.canvasBackground;
+
+                // ASSIGN CANVAS TO DOM
+                this.settings.domContainer.appendChild(this.canvas);
+
+                return false;
+            },
+
+            /**
+              * lastClickedItem
+              **/
             lastClickedItem : function () {
                 return this.clickedItems[this.clickedItems.length - 1];
             },
@@ -52,13 +77,12 @@ define(
                 // ACTOR OPTS
                 // MOVE
                 document.getElementById('btn_a').onclick = function () {
-                    self.Game.grid.showActorMoveOptions( self.lastClickedItem().gridPoint.x, self.lastClickedItem().gridPoint.y, 1 );
+                    self.Grid.showActorMoveOptions( self.lastClickedItem().gridPoint.x, self.lastClickedItem().gridPoint.y, 1 );
                     self.closeActorToolbar();
                 };
                 // ACTION
                 document.getElementById('btn_b').onclick = function () {
                     console.log('clicked b');
-                    self.openActorToolbar();
                 };
                 
                 // BUILDER OPTS
@@ -74,7 +98,7 @@ define(
                     
                     // REVIEW HOW THIS IS DONE! NOT EFFICIENT (for bubbling)
                     self.interactiveObjs.click.reverse();
-                    self.Game.grid.placeActors( actors );
+                    self.Grid.placeActors( actors );
                     self.closeBuilderToolbar();
                     self.interactiveObjs.click.reverse();
                 };
@@ -87,13 +111,13 @@ define(
                     
                     // REVIEW HOW THIS IS DONE! NOT EFFICIENT (for bubbling)
                     self.interactiveObjs.click.reverse();
-                    self.Game.grid.placeActors( actors );
+                    self.Grid.placeActors( actors );
                     self.closeBuilderToolbar();
                     self.interactiveObjs.click.reverse();
                 };
             },
 
-            openActorToolbar : function ( x, y ) {
+            openActorToolbar : function ( x, y, role ) {
                 this.domActorToolbar.style.display = 'block';
                 this.domActorToolbar.style.left = x + 'px';
                 this.domActorToolbar.style.top = y + 'px';
@@ -111,6 +135,24 @@ define(
 
             closeBuilderToolbar : function () {
                 this.domBuilderToolbar.style.display = 'none';
+                document.getElementById('builderPopupOpts').style.display = 'block';
+            },
+
+            /**
+              * assignControls
+              * Called after Grid is set. Executes commands that communicate with grid items
+              **/
+            assignControls : function () {
+                this.assignTileToolbarButtonActions();
+                this.loadEvents();
+            },
+
+            /**
+              * setGrid
+              * Assign the Grid object to a local var so that we can access buttons etc
+              **/
+            setGrid : function (obj) {
+                this.Grid = obj;
             },
 
             makeInteractive : function (data) {
@@ -171,6 +213,11 @@ define(
                     }
                 });
             },
+        };
+        return function( settings ) {
+            _.extend(this,this);
+            UIManagerContext.initialize(settings);
+            return UIManagerContext;
         }
     }
 );

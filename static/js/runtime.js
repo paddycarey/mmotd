@@ -7,13 +7,12 @@ define(
     // Name
     'runtime', 
     // Dependencies
-    ['emitter','UIManager'], 
+    ['emitter'], 
     // Object
-    function ( Notifcation, UIManager ) {
+    function ( Notifcation ) {
         var RuntimeContext = {
             initialize : function( Game ) {
-                this.Game = Game;
-                UIManager.initialize( this.Game );
+                //this.Game = Game;
             }
         };
 

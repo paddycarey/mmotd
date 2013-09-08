@@ -7,20 +7,19 @@ define(
     // Name
     'gridManager',
     // Dependencies
-    ['emitter', 'UIManager'],
+    ['emitter'],
     // Object
-    function ( Notification, UIManager ) {
+    function ( Notification ) {
+
         var GridmanagerContext = {
 
             gridPoint       : [], // gridPoint.x.y = GRID INFO
+            plot            : [], // plot.x.y = EVERYTHING ASSIGNED TO A PLOT
 
-            initialize : function( settings ) {
+            initialize : function( settings, UIManager ) {
+
                 var defaults = {
-                    gridAttrs : {
-                        height : 40,
-                        width  : 40
-                    },
-                    canvasBackground : "url('/static/imgs/grid_40x40.jpg')"
+
                 };
 
                 // STATIC DATA FOR NOW
@@ -28,31 +27,19 @@ define(
                                 [5,6,'attacker']
                                 ];
 
-                this.settings = _.extend(defaults,settings);
+                this.UIManager = UIManager;
+                this.settings = _.extend(defaults, settings, UIManager.settings);
 
-                this.initFrame();
                 this.createGrid();
                 this.placeBuildPoints();
                 this.placeActors( actors );
                 
             },
 
-            initFrame : function() {
-
-                // CREATE CANVAS ELEMENT
-                UIManager.canvas = document.createElement('canvas');
-                UIManager.canvas.height = this.settings.frameAttrs.height;
-                UIManager.canvas.width = this.settings.frameAttrs.width;
-
-                // SET CANVAS STYLES
-                UIManager.canvas.style.backgroundImage = this.settings.canvasBackground;
-
-                // ASSIGN CANVAS TO DOM
-                this.settings.domContainer.appendChild(UIManager.canvas);
-
-                return false;
-            },
-
+            /**
+              * createGrid
+              * Create the initial set of rows and columns that make up the grid
+              **/
             createGrid : function () {
 
                 this.cols = Math.ceil(this.settings.frameAttrs.width / this.settings.gridAttrs.width),
@@ -85,13 +72,17 @@ define(
 
             },
 
+            /**
+              * placeGridRect
+              * Create a square at a particular left + top position
+              **/
             placeGridRect : function ( left, top, settings ) {
 
                 var defaults = {
                     fillStyle : "rgba(100, 100, 255, 0.2)"
                 };
                 settings = _.extend(defaults,settings);
-                var sq = UIManager.canvas.getContext('2d');
+                var sq = this.UIManager.canvas.getContext('2d');
                 sq.beginPath();
                 sq.rect(left, top, this.settings.gridAttrs.width, this.settings.gridAttrs.height);
                 sq.fillStyle = settings.fillStyle;
@@ -120,7 +111,7 @@ define(
                         role : 'builder'
                     };
 
-                    UIManager.makeInteractive({
+                    this.UIManager.makeInteractive({
                         top        : data[i][1] * this.settings.gridAttrs.height,
                         left       : data[i][0] * this.settings.gridAttrs.width,
                         width      : this.settings.gridAttrs.width,
@@ -152,7 +143,7 @@ define(
                         role : data[i][2]
                     };
 
-                    UIManager.makeInteractive({
+                    this.UIManager.makeInteractive({
                         top        : data[i][1] * this.settings.gridAttrs.height,
                         left       : data[i][0] * this.settings.gridAttrs.width,
                         width      : this.settings.gridAttrs.width,
@@ -169,52 +160,46 @@ define(
 
             /**
               * assignBuilderClick
-              * If a tile can be built upon, this method will be called for it
+              * Clicked on a tile that can have something built on it
               **/
             assignBuilderClick : function ( gridPoint ) {
                 if (gridPoint.buildPoint !== false) {
-                    var x = gridPoint.left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
-                        y = gridPoint.top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
-                    UIManager.openBuilderToolbar( x, y );
+                    var left = gridPoint.left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
+                        top  = gridPoint.top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
+                    this.UIManager.openBuilderToolbar( left, top );
                 }
             },
 
             /**
               * assignActorClick
+              * Clicked an actor on the stage (eg. builder / defender)
               **/
             assignActorClick : function ( gridPoint ) {
-                switch (gridPoint.actor.role) {
-                    case 'defender':
-                        if (gridPoint.buildPoint !== false) {
-                            var x = gridPoint.left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
-                                y = gridPoint.top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
-                            UIManager.openActorToolbar( x, y );
-                        }
-                    break;
-                    case 'attacker':
-                        if (gridPoint.buildPoint !== false) {
-                            var x = gridPoint.left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
-                                y = gridPoint.top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
-                            UIManager.openActorToolbar( x, y );
-                        }
-                    break;
-                }
+                var left = gridPoint.left + this.settings.gridAttrs.width + this.settings.canvasOffsetLeft,
+                    top  = gridPoint.top + this.settings.gridAttrs.height + this.settings.canvasOffsetTop;
+                this.UIManager.openActorToolbar( left, top, gridPoint.actor.role );
             },
 
+            /**
+              * showActorMoveOptions
+              * Display a selectable perimeter around a plot
+              **/
             showActorMoveOptions : function ( x, y, stepSize ) {
                 var l = (stepSize*2)+1;
                 for (var _x = x-stepSize, t = _x + l; _x < t; _x++) {
                     for (var _y = y-stepSize, yt = _y + l; _y < yt; _y++) {
                         if (!(x == _x && y == _y)) {
                             this.placeGridRect( _x * this.settings.gridAttrs.width, _y * this.settings.gridAttrs.width, { fillStyle : "rgba(100, 200, 0, 0.2)" } );
+                            // @notes:
+                            // add the above to a tmp[] storage so those tiles can be instantly removed
                         }
                     }
                 }
             }
         };
-        return function( settings ) {
+        return function( settings, UIManager ) {
             _.extend(this,this);
-            GridmanagerContext.initialize(settings);
+            GridmanagerContext.initialize(settings, UIManager);
             return GridmanagerContext;
         }
     }
