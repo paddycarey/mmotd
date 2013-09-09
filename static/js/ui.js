@@ -19,7 +19,7 @@ define(
 
             initialize : function( Game ) {
                 var defaults = {
-                    backgroundColor : "#333333"
+                    backgroundColor : 0x333333
                 };
                 this.settings = _.extend(defaults,Game.settings,Game.Grid.settings);
 
@@ -40,15 +40,15 @@ define(
             },
 
             createCanvas : function () {
-            	console.log('create canvas', this.settings);
-                this.canvas = document.createElement('canvas');
-                this.canvas2dContext = this.canvas.getContext('2d');
-                this.canvas.height = this.settings.frameAttrs.height;
-                this.canvas.width = this.settings.frameAttrs.width;
-                this.canvas.style.backgroundColor = this.settings.backgroundColor;
-                this.settings.domContainer.appendChild(this.canvas);
+                this.canvas = new PIXI.Stage(this.settings.backgroundColor);
+                this.renderer = PIXI.autoDetectRenderer(this.settings.frameAttrs.height, this.settings.frameAttrs.width);
+                this.settings.domContainer.appendChild(this.renderer.view);
                 this.settings.canvasOffsetLeft = this.settings.domContainer.offsetLeft;
                 this.settings.canvasOffsetTop = this.settings.domContainer.offsetTop;
+                // TEXTURES
+                this.textures = {
+                    grid : PIXI.Texture.fromImage("/static/imgs/grid_sq_40x40.jpg")
+                };
             },
 
             /**
@@ -77,6 +77,7 @@ define(
               * Render a square onto the scene
               **/
             displayPlot : function ( plot ) {
+                /*
                 var conf = {
                         x      : plot.x,
                         y      : plot.y,
@@ -85,24 +86,35 @@ define(
                         left   : plot.x * this.settings.gridAttrs.width,
                         top    : plot.y * this.settings.gridAttrs.height
                     },
-                sq = this.canvas2dContext;
-
-                conf = this.assignPlotFunctionality( plot, conf );
-
-                sq.beginPath();
-                sq.rect(conf.left, conf.top, conf.width, conf.height);
-                sq.fillStyle = conf.fillStyle;
-                sq.fill();
+                sq = new PIXI.Sprite(this.textures.grid);
+                sq.anchor.x = 0.5;
+                sq.anchor.y = 0.5;
+                
+                conf = this.assignPlotFunctionality( plot, conf, sq );
+                
+                //sq.lineStyle(1, 0xFF0000);    // STROKE = RED
+                //sq.beginFill(conf.fillStyle); // FILL
+                
+                //sq.drawRect(conf.left, conf.top, conf.width, conf.height);
+                
+                this.canvas.addChild(sq);
 
                 // HIGHLIGHT TILE
                 if( (typeof(plot.attrs.highlight) != 'undefined') && (plot.attrs.highlight == true)) {
-                    sq.beginPath();
                     sq.rect(conf.left, conf.top, conf.width, conf.height);
-                    sq.fillStyle = "rgba(100, 155, 155, 0.2)";
-                    sq.fill();
+                    sq.fillStyle = 0xFFCC00;
+                    this.canvas.addChild(sq);
                 }
 
+            
+                sq.click = sq.touchstart = function(data){
+                    data.originalEvent.preventDefault();
+                    console.log('down');
+                };
+
                 return sq;
+                */
+               console.log('x');
             },
 
             /**
@@ -144,8 +156,8 @@ define(
             /**
               * assignPlotFunctionality
               **/
-            assignPlotFunctionality : function ( plot, conf ) {
-                conf.fillStyle  = "rgba(204, 255, 102, 1)";
+            assignPlotFunctionality : function ( plot, conf, sq ) {
+                conf.fillStyle  = 0x00FF00;
                 conf.x          = plot.x;
                 conf.y          = plot.y;
                 var interactive = true;
@@ -160,32 +172,32 @@ define(
                     switch (plot.attrs.role) {
                         case 'defender':
                             if (interactive) {
-                                conf.click = (function(){
+                                sq.click = sq.touchstart = function(data){
                                     self.showMoveOptions(this, 1);
                                     console.log('defend');
-                                });
+                                };
                                 this.makeInteractive(conf);
                             }
-                            conf.fillStyle = "rgba(0, 100, 255, 1)";
+                            conf.fillStyle = 0xFF0000;
                         break;
                         case 'attacker':
                             if (interactive) {
-                                conf.click = (function(){
+                                sq.click = sq.touchstart = function(data){
                                     self.showMoveOptions(this, 2);
                                     console.log('attack');
-                                });
+                                };
                                 this.makeInteractive(conf);
                             }
-                            conf.fillStyle = "rgba(255, 100, 255, 1)";
+                            conf.fillStyle = 0xCCFF66;
                         break;
 						default:
                             if (interactive) {
-    							conf.click = (function(){
+    							sq.click = sq.touchstart = function(data){
     								console.log('builder');
-    							});
+    							};
     							this.makeInteractive(conf);
 							}
-							conf.fillStyle = "rgba(255, 100, 0, 1)";
+							conf.fillStyle = 0x00FF99;
 							break;
 
                     }
@@ -194,7 +206,7 @@ define(
                 	switch (plot.attrs.terrain) {
 						case 1:
 							//console.log('found terrain at', conf.x, conf.y);
-							conf.fillStyle = "rgba(50, 50, 50, 1)";
+							conf.fillStyle = 0x33FF00;
 							break;
 						default:
 							break;
@@ -239,47 +251,9 @@ define(
                 }
                 return (hit.length === 0) ? false : hit;
             },
-
-            /**
-              * loadEvents
-              * Adds scene event listeners
-              **/
-            loadEvents : function () {
-                var self = this;
-                // CLICK
-                this.canvas.addEventListener('click', function(e) {
-                    self.clickedItems = []; // Reset
-                    var x = e.pageX - self.settings.canvasOffsetLeft,
-                        y = e.pageY - self.settings.canvasOffsetTop,
-                        collisions = self.collisionDetection(self.interactiveObjs.click, x, y);
-                    if (collisions) {
-                        for (obj in collisions) {
-                            self.clickedItems.push(collisions[obj]);
-                            collisions[obj].click();
-                            if (collisions[obj].stopClickBubble) break;
-                        }
-                    }
-                }, false);
-                // MOUSEDOWN
-                this.canvas.addEventListener('mousedown', function(e) {
-                    self.mousedown = true;
-                });
-                // MOUSEUP
-                document.addEventListener('mouseup', function(e) {
-                    self.mousedown = false;
-                });
-                // MOUSEMOVE
-                this.canvas.addEventListener('mousemove', function(e) {
-                    if (self.mousedown) {
-                        // DRAG
-                        
-                    }
-                });
-            },
         };
 
         return function( Game ) {
-            _.extend(this,this);
             UIContext.initialize( Game );
             return UIContext;
         }

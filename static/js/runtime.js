@@ -19,7 +19,6 @@ define(
                 this.MapGen = new MapGen(200, 'testseed');
 
                 this.render();
-                this.UIManager.loadEvents();
 
             },
 
@@ -53,28 +52,23 @@ define(
             },
 
             render : function () {
-                var self  = this,
-                    frame = 0;
+                
+                var self  = this;
 
                     self.Game.setData(self.loadData());
 
 					(function animloop(){
 						requestAnimFrame(animloop);
 
-						//self.Game.setData(self.loadData());
+						self.UIManager.renderer.render(self.UIManager.canvas);
 
-						if (frame%2==0) {
-							// UPDATE PLOTS
-							self.UIManager.updatePlots();
-						}
-
-						frame++;
+						self.UIManager.updatePlots();
+						
 					})();
             }
         };
 
         return function( Game ) {
-            _.extend(this,this);
             RuntimeContext.initialize( Game );
             return RuntimeContext;
         }

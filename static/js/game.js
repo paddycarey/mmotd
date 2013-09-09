@@ -55,7 +55,6 @@ define(
         };
 
         return function( settings ) {
-            _.extend(this,this);
             GameContext.initialize(settings);
             return GameContext;
         }
