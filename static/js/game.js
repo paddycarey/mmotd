@@ -1,13 +1,13 @@
 /**
   * game.js
-  * 
-  * 
+  *
+  *
   **/
 define(
     // Name
-    'game', 
+    'game',
     // Dependencies
-    ['grid'], 
+    ['grid'],
     // Object
     function( GridManager ) {
 
@@ -19,8 +19,8 @@ define(
 
                 var defaults = {
                     frameAttrs : {
-                        height : 400,
-                        width  : 640
+                        height : 800,
+                        width  : 800
                     }
                 };
                 this.settings = _.extend(defaults,settings);

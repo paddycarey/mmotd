@@ -1,7 +1,7 @@
 /**
   * main.js
-  * 
-  * 
+  *
+  *
   **/
 require(
     // Dependencies
@@ -11,12 +11,12 @@ require(
         var App = {
 
             initialize : function() {
-                
+
                 this.Game = new Game({
                     domContainer : document.getElementById('game'),
                     frameAttrs : {
-                        height : 400,
-                        width  : 640
+                        height : 800,
+                        width  : 800
                     }
                 });
 
@@ -24,7 +24,7 @@ require(
                     this.beginSession();
                 }
 
-            }, 
+            },
 
             beginSession : function() {
                 this.session = new Runtime( this.Game );

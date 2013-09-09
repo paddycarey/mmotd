@@ -1,13 +1,13 @@
 /**
   * ui.js
-  * 
-  * 
+  *
+  *
   **/
 define(
     // Name
-    'ui', 
+    'ui',
     // Dependencies
-    [], 
+    [],
     // Object
     function ( Game ) {
 
@@ -40,6 +40,7 @@ define(
             },
 
             createCanvas : function () {
+            	console.log('create canvas', this.settings);
                 this.canvas = document.createElement('canvas');
                 this.canvas2dContext = this.canvas.getContext('2d');
                 this.canvas.height = this.settings.frameAttrs.height;
@@ -117,8 +118,8 @@ define(
                 if (sy < 0) sy = 0;
                 for (var x = sx; x <= ex; x++) {
                     for (var y = sy; y <= ey; y++) {
-                        if (    !(x == self.x && y == self.y) && 
-                                (typeof(this.Game.Grid.plot[x]) != 'undefined') && 
+                        if (    !(x == self.x && y == self.y) &&
+                                (typeof(this.Game.Grid.plot[x]) != 'undefined') &&
                                 (typeof(this.Game.Grid.plot[x][y]) != 'undefined')) {
                             // HIGHLIGHT TILE
                             this.Game.Grid.plot[x][y].attrs.highlight = true;
@@ -135,11 +136,13 @@ define(
               **/
             assignPlotFunctionality : function ( plot, conf ) {
                 conf.fillStyle = "rgba(204, 255, 102, 1)";
+                conf.x     = plot.x;
+                conf.y     = plot.y;
+
                 if (typeof(plot.attrs.role) != 'undefined') {
                     var self = this;
                     // MAKE INTERACTIVE
-                    conf.x     = plot.x;
-                    conf.y     = plot.y;
+
                     switch (plot.attrs.role) {
                         case 'defender':
                             conf.click = (function(){
@@ -157,14 +160,26 @@ define(
                             this.makeInteractive(conf);
                             conf.fillStyle = "rgba(255, 100, 255, 1)";
                         break;
-                        default:
-                            // 
-                            conf.click = (function(){
-                                console.log('builder');
-                            });
-                            this.makeInteractive(conf);
-                            conf.fillStyle = "rgba(255, 100, 0, 1)";
+						default:
+							conf.click = (function(){
+								console.log('builder');
+							});
+							this.makeInteractive(conf);
+							conf.fillStyle = "rgba(255, 100, 0, 1)";
+							break;
+
                     }
+                } else {
+
+                	switch (plot.attrs.terrain) {
+						case 1:
+							//console.log('found terrain at', conf.x, conf.y);
+							conf.fillStyle = "rgba(50, 50, 50, 1)";
+							break;
+						default:
+							break;
+					}
+
                 }
                 return conf;
             },
@@ -196,7 +211,7 @@ define(
                 var hit = [];
                 for (var x in collection) {
                     for (var y in collection[x]) {
-                        if (top > collection[x][y].top && top < collection[x][y].top + collection[x][y].height 
+                        if (top > collection[x][y].top && top < collection[x][y].top + collection[x][y].height
                             && left > collection[x][y].left && left < collection[x][y].left + collection[x][y].width) {
                                 hit.push(collection[x][y]);
                         }

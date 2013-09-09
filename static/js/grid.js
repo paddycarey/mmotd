@@ -1,17 +1,17 @@
 /**
   * grid.js
-  * 
-  * 
+  *
+  *
   **/
 define(
     // Name
-    'grid', 
+    'grid',
     // Dependencies
-    [], 
+    [],
     // Object
     function () {
         var GridContext = {
-            
+
             plot          : [], // CONTAINS ALL DATA RELATED TO A SQUARE
             tmpHighlights : [], // LIST OF HIGHLIGHTED PLOTS
             updatePlots   : [], // ANY PLOTS THAT NEED TO BE UPDATED BY THE RENDER
@@ -19,8 +19,8 @@ define(
             initialize : function( settings ) {
                 var defaults = {
                     gridAttrs : {
-                        height : 40,
-                        width  : 40
+                        height : 32,
+                        width  : 32
                     }
                 };
                 this.settings = _.extend(defaults, settings);
