@@ -32,9 +32,22 @@ define(
 
                 data.plots = this.MapGen.getPlotData();
 
-                data.plots[4][4].attrs.role = 'defender';
-                data.plots[5][6].attrs.role = 'attacker';
-                data.plots[13][3].attrs.role = 'attacker';
+                data.plots[4][4].attrs = {
+                    role : 'defender',
+                    team : 0
+                };
+                data.plots[5][6].attrs = {
+                    role : 'defender',
+                    team : 0
+                };
+                data.plots[5][7].attrs = {
+                    role : 'attacker',
+                    team : 0
+                };
+                data.plots[7][8].attrs = {
+                    role : 'attacker',
+                    team : 1
+                };
 
                 return data;
             },

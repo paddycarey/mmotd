@@ -121,11 +121,21 @@ define(
                         if (    !(x == self.x && y == self.y) &&
                                 (typeof(this.Game.Grid.plot[x]) != 'undefined') &&
                                 (typeof(this.Game.Grid.plot[x][y]) != 'undefined')) {
-                            // HIGHLIGHT TILE
-                            this.Game.Grid.plot[x][y].attrs.highlight = true;
-                            this.Game.Grid.tmpHighlights.push([parseInt(x),parseInt(y)]);
-                            // ADD TO UPDATE STACK
-                            this.Game.Grid.updatePlots.push([parseInt(x),parseInt(y)]);
+                            // ENSURE THIS DOESNT COLLIDE WITH AN ACTOR
+                            if (    (typeof(this.Game.Grid.plot[x][y].attrs.role) == 'undefined') || 
+                                    (this.Game.Grid.plot[x][y].attrs.role == '')) {
+                                // HIGHLIGHT TILE
+                                this.Game.Grid.plot[x][y].attrs.highlight = true;
+                                this.Game.Grid.tmpHighlights.push([parseInt(x),parseInt(y)]);
+                                // ADD TO UPDATE STACK
+                                this.Game.Grid.updatePlots.push([parseInt(x),parseInt(y)]);
+                            } else {
+                                // COLLIDED WITH ACTOR
+                                if (this.settings.myTeam != this.Game.Grid.plot[x][y].attrs.team) {
+                                    // OTHER TEAMS ACTOR
+                                    console.log('Highlight collided with other teams ' + this.Game.Grid.plot[x][y].attrs.role + ' at ' + x + ', ' + y);
+                                }
+                            }
                         }
                     }
                 }
@@ -135,9 +145,13 @@ define(
               * assignPlotFunctionality
               **/
             assignPlotFunctionality : function ( plot, conf ) {
-                conf.fillStyle = "rgba(204, 255, 102, 1)";
-                conf.x     = plot.x;
-                conf.y     = plot.y;
+                conf.fillStyle  = "rgba(204, 255, 102, 1)";
+                conf.x          = plot.x;
+                conf.y          = plot.y;
+                var interactive = true;
+                if (plot.attrs.team != this.settings.myTeam) {
+                    interactive = false;
+                }
 
                 if (typeof(plot.attrs.role) != 'undefined') {
                     var self = this;
@@ -145,26 +159,32 @@ define(
 
                     switch (plot.attrs.role) {
                         case 'defender':
-                            conf.click = (function(){
-                                self.showMoveOptions(this, 1);
-                                console.log('defend');
-                            });
-                            this.makeInteractive(conf);
+                            if (interactive) {
+                                conf.click = (function(){
+                                    self.showMoveOptions(this, 1);
+                                    console.log('defend');
+                                });
+                                this.makeInteractive(conf);
+                            }
                             conf.fillStyle = "rgba(0, 100, 255, 1)";
                         break;
                         case 'attacker':
-                            conf.click = (function(){
-                                self.showMoveOptions(this, 2);
-                                console.log('attack');
-                            });
-                            this.makeInteractive(conf);
+                            if (interactive) {
+                                conf.click = (function(){
+                                    self.showMoveOptions(this, 2);
+                                    console.log('attack');
+                                });
+                                this.makeInteractive(conf);
+                            }
                             conf.fillStyle = "rgba(255, 100, 255, 1)";
                         break;
 						default:
-							conf.click = (function(){
-								console.log('builder');
-							});
-							this.makeInteractive(conf);
+                            if (interactive) {
+    							conf.click = (function(){
+    								console.log('builder');
+    							});
+    							this.makeInteractive(conf);
+							}
 							conf.fillStyle = "rgba(255, 100, 0, 1)";
 							break;
 
@@ -252,7 +272,7 @@ define(
                 this.canvas.addEventListener('mousemove', function(e) {
                     if (self.mousedown) {
                         // DRAG
-
+                        
                     }
                 });
             },

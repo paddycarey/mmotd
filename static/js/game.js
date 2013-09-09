@@ -21,7 +21,8 @@ define(
                     frameAttrs : {
                         height : 800,
                         width  : 800
-                    }
+                    },
+                    myTeam     : 0, // ID OF CLIENTS TEAM
                 };
                 this.settings = _.extend(defaults,settings);
 
