@@ -4,7 +4,6 @@
   * Simple timed event management - skips the need for countless untrackable setIntervals and setTimeouts
   **/
 define(
-    'timer',
     [],
     function(){
         var Timer = function(){
@@ -13,12 +12,13 @@ define(
             me._dirty = false;
         };
 
-        Timer.prototype.add = function(action, elapsed, repeat){
+        Timer.prototype.add = function(action, timeout, repeat){
             var me = this;
-            var timestamp = me._lastStamp ? me._lastStamp + elapsed : new Date().getTime() + elapsed;
+            var timestamp = me._lastStamp ? me._lastStamp + timeout : new Date().getTime() + timeout;
             var evt = {
                 action: action,
-                elapsed: elapsed,
+                timeout: timeout,
+                lastExec: me._lastStamp,
                 timestamp: timestamp,
                 repeat: repeat
             };
@@ -83,12 +83,13 @@ define(
             var evt = me._events.shift();
             while (evt){
                 if(evt.timestamp < me._lastStamp){
-                    evt.action();
+                    evt.action(me._lastStamp - evt.lastExec);
                     if(evt.repeat > 0 || evt.repeat == -1){
                         if(evt.repeat > 0){
                             evt.repeat--;
                         }
-                        evt.timestamp += evt.elapsed;
+                        evt.timestamp += evt.timeout;
+                        evt.lastExec = me._lastStamp;
                         me._events.push(evt);
                         me._dirty = true;
                     }
