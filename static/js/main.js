@@ -3,7 +3,7 @@
   *
   *
   **/
-require(
+define(
     // Dependencies
     ['game','runtime'],
     // Object
