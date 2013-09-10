@@ -4,12 +4,10 @@
   *
   **/
 define(
-    // Name
-    'runtime',
     // Dependencies
-    ['ui', 'mapgen'],
+    ['ui', 'mapgen', 'utils/timer'],
     // Object
-    function ( UIManager, MapGen ) {
+    function ( UIManager, MapGen, Timer ) {
         var RuntimeContext = {
 
             initialize : function( Game ) {
@@ -20,7 +18,8 @@ define(
 
                 this.render();
                 this.UIManager.loadEvents();
-
+                Timer.start();
+                Timer.add(_.bind(this.update, this), 50, -1); // Logic loop
             },
 
             loadData : function () {
@@ -65,11 +64,16 @@ define(
 
 						if (frame%2==0) {
 							// UPDATE PLOTS
-							self.UIManager.updatePlots();
 						}
 
 						frame++;
 					})();
+            },
+
+            update : function(elapsed){
+                var me = this;
+                me.UIManager.updatePlots();
+
             }
         };
 
