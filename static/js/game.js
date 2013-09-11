@@ -19,8 +19,8 @@ define(
 
                 var defaults = {
                     frameAttrs : {
-                        height : 800,
-                        width  : 800
+                        height : window.innerHeight,
+                        width  : window.innerWidth
                     },
                     myTeam     : 0, // ID OF CLIENTS TEAM
                 };

@@ -15,8 +15,8 @@ define(
                 this.Game = new Game({
                     domContainer : document.getElementById('game'),
                     frameAttrs : {
-                        height : 800,
-                        width  : 800
+                        height : window.innerHeight,
+                        width  : window.innerWidth
                     }
                 });
 
