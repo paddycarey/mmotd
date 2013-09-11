@@ -20,8 +20,9 @@ define(
                 timeout: timeout,
                 lastExec: me._lastStamp,
                 timestamp: timestamp,
-                repeat: repeat
+                repeat: repeat 
             };
+            if(evt.repeat > 0) evt.repeat--;
             me._events.push(evt);
             me._dirty = true;
             return evt;
