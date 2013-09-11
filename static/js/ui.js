@@ -122,7 +122,7 @@ define(
                                 (typeof(this.Game.Grid.plot[x]) != 'undefined') &&
                                 (typeof(this.Game.Grid.plot[x][y]) != 'undefined')) {
                             // ENSURE THIS DOESNT COLLIDE WITH AN ACTOR
-                            if (    (typeof(this.Game.Grid.plot[x][y].attrs.role) == 'undefined') || 
+                            if (    (typeof(this.Game.Grid.plot[x][y].attrs.role) == 'undefined') ||
                                     (this.Game.Grid.plot[x][y].attrs.role == '')) {
                                 // HIGHLIGHT TILE
                                 this.Game.Grid.plot[x][y].attrs.highlight = true;
@@ -272,7 +272,7 @@ define(
                 this.canvas.addEventListener('mousemove', function(e) {
                     if (self.mousedown) {
                         // DRAG
-                        
+
                     }
                 });
             },
