@@ -1,4 +1,16 @@
+define(
+    [],
+    function(){
+
+
+
+// begin test code >>>
+
+
+
 describe('The game', function() {
+
+
 
 		it('has at least 2 players', function() {
 
@@ -111,5 +123,13 @@ describe('Commands', function() {
 				});
 
 		});
+
+});
+
+
+
+// <<<< end test code
+
+
 
 });

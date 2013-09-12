@@ -7,12 +7,9 @@ require.config({
 
 require(
     [
-        "tests/spec/utils/timer",
-        "tests/spec/graphics/Spritemap"
+        "tests/spec/Proto1"
     ],
     function(){
-
-    	console.log('wtf');
         var jasmineEnv = jasmine.getEnv();
         jasmineEnv.updateInterval = 1000;
 
