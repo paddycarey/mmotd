@@ -13,7 +13,7 @@ define(
             initialize : function() {
 
                 this.Game = new Game({
-                    domContainer : document.getElementById('game'),
+                    domContainer : document.getElementById('game') || document.createElement('div'),
                     frameAttrs : {
                         height : window.innerHeight,
                         width  : window.innerWidth

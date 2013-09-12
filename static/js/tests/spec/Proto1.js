@@ -1,6 +1,6 @@
 define(
-    ['game'],
-    function(Game){
+    ['underscore','lib','main','game'],
+    function(_, lib, Main, Game){
 
 
 
