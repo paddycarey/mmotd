@@ -15,6 +15,10 @@ define(
 
         Spritemap.prototype = Object.create(Drawable.prototype);
 
+        Spritemap.prototype.generateMapping = function(e){
+            console.log(e);
+        };
+
         return Spritemap;
     }
 );
