@@ -21,17 +21,7 @@ require(
             return htmlReporter.specFilter(spec);
         };
 
-        var currentWindowOnload = window.onload;
+        jasmineEnv.execute();
 
-        window.onload = function() {
-            if (currentWindowOnload) {
-                currentWindowOnload();
-            }
-            execJasmine();
-        };
-
-        function execJasmine() {
-            jasmineEnv.execute();
-        }
     }
 );

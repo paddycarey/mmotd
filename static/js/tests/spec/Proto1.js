@@ -1,16 +1,13 @@
 define(
-    [],
-    function(){
+    ['game'],
+    function(Game){
 
 
 
 // begin test code >>>
 
 
-
 describe('The game', function() {
-
-
 
 		it('has at least 2 players', function() {
 
